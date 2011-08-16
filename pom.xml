@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project Description -->
+  <groupId>org.colomoto</groupId>
+  <artifactId>MDDlib</artifactId>
+  <name>MDD manipulation toolkit</name>
+  <version>0.1</version>
+  <description>simple, flexible and non-optimized MDD toolkit</description>
+  <inceptionYear>2009</inceptionYear>
+  <packaging>bundle</packaging>
+  <url>TODO</url>
+
+
+<!--  Shared parameters are defined in the parent POM -->
+<!--
+  <parent>
+    <groupId>org.colomoto</groupId>
+    <artifactId>colomoto-project</artifactId>
+    <version>1.0</version>
+  </parent>
+-->
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+
+
+	<!-- for packaging as an OSGi bundle, we use the maven-bundle-plugin -->
+	<!-- see http://felix.apache.org/site/maven-bundle-plugin-bnd.html for more info -->
+	<build>
+		<resources>
+			<!-- get resources from the root folder -->
+			<resource>
+				<directory>.</directory>
+				<includes>
+					<include>plugin.xml</include>
+					<include>META-INF/*</include>
+				</includes>
+			</resource>
+		</resources>
+
+		<plugins>
+		   <plugin>
+	          <groupId>org.apache.maven.plugins</groupId>
+    	      <artifactId>maven-compiler-plugin</artifactId>
+        	  <!-- best lock down version of the plugin too -->
+	          <configuration>
+    	        <source>1.6</source>
+        	    <target>1.6</target>
+	          </configuration>
+    	    </plugin>
+		
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<version>1.4.0</version>
+				<configuration>
+					<manifestLocation>META-INF</manifestLocation>
+					<instructions>
+						<Export-Package>fr.univmrs.tagc*</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
