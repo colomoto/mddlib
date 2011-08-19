@@ -2,6 +2,7 @@ package fr.univmrs.tagc.logicalfunction;
 
 import java.util.Stack;
 
+
 /**
  * Operator factory: creates nodes corresponding to a given operator.
  * <p>
@@ -17,5 +18,5 @@ public interface OperatorFactory {
 	
 	public int getPriority();
 	
-	public BooleanNode getNode(Stack<BooleanNode> stack);
+	public FunctionNode getNode(Stack<FunctionNode> stack);
 }

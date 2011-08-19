@@ -12,9 +12,12 @@ import fr.univmrs.tagc.javaMDD.NodeRelation;
 public class MDDBaseOperators {
 
 	/**
-	 * AND operator.
+	 * the AND operator.
 	 */
 	public static final MDDOperator AND = new MDDAndOperator();
+	/**
+	 * the OR operator.
+	 */
 	public static final MDDOperator OR = new MDDOrOperator();
 	
 	private MDDBaseOperators() {
@@ -41,13 +44,13 @@ class MDDAndOperator extends AbstractOperator {
 		switch (status) {
 		case LN:
 		case LL:
-			if (f.getLeafValue(first) < 1) {
+			if (first < 1) {
 				// no need to "use" it: it is a leaf
 				return first;
 			}
 			return f.use(other);
 		case NL:
-			if (f.getLeafValue(other) < 1) {
+			if (other < 1) {
 				// no need to "use" it: it is a leaf
 				return other;
 			}
@@ -99,12 +102,12 @@ class MDDOrOperator extends AbstractOperator {
 		switch (status) {
 		case LN:
 		case LL:
-			if (f.getLeafValue(first) > 0) {
+			if (first > 0) {
 				return first;
 			}
 			return f.use(other);
 		case NL:
-			if (f.getLeafValue(other) > 0) {
+			if (other > 0) {
 				return other;
 			}
 			return f.use(first);

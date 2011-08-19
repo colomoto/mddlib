@@ -2,7 +2,7 @@ package fr.univmrs.tagc.logicalfunction.operators;
 
 import java.util.Stack;
 
-import fr.univmrs.tagc.logicalfunction.BooleanNode;
+import fr.univmrs.tagc.logicalfunction.FunctionNode;
 
 /**
  * Common methods for unary operators (only not for now).
@@ -12,13 +12,13 @@ import fr.univmrs.tagc.logicalfunction.BooleanNode;
  */
 public abstract class AbstractUnaryOperator extends AbstractOperator {
 
-	protected BooleanNode arg;
+	protected FunctionNode arg;
 
-	public AbstractUnaryOperator(Stack<BooleanNode> stack) {
+	public AbstractUnaryOperator(Stack<FunctionNode> stack) {
 		arg = stack.pop();
 	}
   
-	public AbstractUnaryOperator(BooleanNode f) {
+	public AbstractUnaryOperator(FunctionNode f) {
 		arg = f;
 	}
 
@@ -34,8 +34,8 @@ public abstract class AbstractUnaryOperator extends AbstractOperator {
 	}
 	  
 	@Override
-	public BooleanNode[] getArgs() {
-	    BooleanNode[] r = new BooleanNode[1];
+	public FunctionNode[] getArgs() {
+	    FunctionNode[] r = new FunctionNode[1];
 	    r[0] = arg;
 	    return r;
 	}

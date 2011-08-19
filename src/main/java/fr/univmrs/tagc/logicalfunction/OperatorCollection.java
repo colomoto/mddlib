@@ -45,7 +45,7 @@ public class OperatorCollection {
 	 * 
 	 * @return an operator object for this function
 	 */
-	public BooleanNode createOperator(String value, Stack<BooleanNode> stack) {
+	public FunctionNode createOperator(String value, Stack<FunctionNode> stack) {
 		OperatorFactory of = m_factories.get(value);
 		if (of == null) {
 			throw new RuntimeException("invalid operator: "+value);

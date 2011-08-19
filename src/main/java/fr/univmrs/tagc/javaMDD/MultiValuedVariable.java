@@ -1,7 +1,7 @@
 package fr.univmrs.tagc.javaMDD;
 
 /**
- * Definition of a variable that can be used for MDDFactory.
+ * Definition of a multi-valued variable that can be used for MDDFactory.
  * <p>
  * A variable has a name, an optional associated object and set of possible values.
  * For the sake of simplicity, only the number of possible values is defined,
@@ -15,22 +15,22 @@ package fr.univmrs.tagc.javaMDD;
  * 
  * @author Aurelien Naldi
  */
-public class MDDVariable {
+public class MultiValuedVariable {
 	public final String name;
 	public final Object key;
 	final byte nbval;
 	final byte spanbloc;
 	
-	public MDDVariable (String name) {
+	public MultiValuedVariable (String name) {
 		this(name, 2);
 	}
-	public MDDVariable (String name, int nbval) {
+	public MultiValuedVariable (String name, int nbval) {
 		this.key = name;
 		this.name = name;
 		this.nbval = (byte)nbval;
 		this.spanbloc = 0;
 	}
-	public MDDVariable (Object key, String name, int nbval) {
+	public MultiValuedVariable (Object key, String name, int nbval) {
 		this.key = key;
 		this.name = name;
 		this.nbval = (byte)nbval;

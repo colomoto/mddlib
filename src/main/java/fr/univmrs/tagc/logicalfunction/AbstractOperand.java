@@ -10,7 +10,7 @@ import fr.univmrs.tagc.javaMDD.MDDFactory;
  * @author Fabrice Lopez: initial implementation
  * @author Aurelien Naldi: adaptation
  */
-public abstract class AbstractBooleanOperand implements BooleanNode {
+public abstract class AbstractOperand implements FunctionNode {
 
 	@Override
 	public boolean isLeaf() {

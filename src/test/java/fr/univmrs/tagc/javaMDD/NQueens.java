@@ -47,14 +47,14 @@ public class NQueens {
 	 */
 	public static int testBNQueens(int N) {
 		int nbvar = N*N;
-		MDDVariable[] variables = new MDDVariable[nbvar];
+		MultiValuedVariable[] variables = new MultiValuedVariable[nbvar];
 		int[][] basics = new int[nbvar][2];
 		for (int i=0 ; i<N ; i++) {
 			for (int j=0 ; j<N ; j++) {
-				variables[i*N+j] = new MDDVariable(i+","+j);
+				variables[i*N+j] = new MultiValuedVariable(i+","+j);
 			}
 		}
-		MDDFactory f = new MDDFactory(variables, new int[] {0,1});
+		MDDFactory f = new MDDFactory(variables, 2);
 		for (int i=0 ; i<nbvar ; i++) {
 			basics[i][0] = f.get_bnode(i, 1, 0);
 			basics[i][1] = f.get_bnode(i, 0, 1);
@@ -123,11 +123,11 @@ public class NQueens {
 	 */
 	public static int testMNQueens(int N) {
 		int nbvar = N;
-		MDDVariable[] variables = new MDDVariable[nbvar];
+		MultiValuedVariable[] variables = new MultiValuedVariable[nbvar];
 		for (int i=0 ; i<N ; i++) {
-			variables[i] = new MDDVariable(""+i, N);
+			variables[i] = new MultiValuedVariable(""+i, N);
 		}
-		MDDFactory f = new MDDFactory(variables, new int[] {0,1});
+		MDDFactory f = new MDDFactory(variables, 2);
 		int[][] basics = new int[nbvar*nbvar][2];
 		for (int i=0 ; i<nbvar ; i++) {
 			for (int j=0 ; j<nbvar ; j++) {

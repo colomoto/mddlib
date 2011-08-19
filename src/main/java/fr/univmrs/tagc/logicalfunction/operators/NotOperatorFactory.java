@@ -3,7 +3,7 @@ package fr.univmrs.tagc.logicalfunction.operators;
 import java.util.Stack;
 
 import fr.univmrs.tagc.javaMDD.MDDFactory;
-import fr.univmrs.tagc.logicalfunction.BooleanNode;
+import fr.univmrs.tagc.logicalfunction.FunctionNode;
 import fr.univmrs.tagc.logicalfunction.OperatorFactory;
 
 /**
@@ -36,11 +36,11 @@ public class NotOperatorFactory implements OperatorFactory {
 	}
 
 	@Override
-	public BooleanNode getNode(Stack<BooleanNode> stack) {
+	public FunctionNode getNode(Stack<FunctionNode> stack) {
 		return new NotOperator(stack);
 	}
 	
-	public BooleanNode getNode(BooleanNode n) {
+	public FunctionNode getNode(FunctionNode n) {
 		return new NotOperator(n);
 	}
 }
@@ -53,11 +53,11 @@ public class NotOperatorFactory implements OperatorFactory {
  */
 class NotOperator extends AbstractUnaryOperator {
 
-	public NotOperator(Stack<BooleanNode> stack) {
+	public NotOperator(Stack<FunctionNode> stack) {
 		super(stack);
 	}
 
-	public NotOperator(BooleanNode f) {
+	public NotOperator(FunctionNode f) {
 		super(f);
 	}
 

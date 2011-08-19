@@ -7,12 +7,11 @@ public class TestMDD extends TestCase {
 
 	public void testConstruction() {
 		int base, c;
-		MDDVariable[] variables = new MDDVariable[5];
+		MultiValuedVariable[] variables = new MultiValuedVariable[5];
 		for (int i=0 ; i<variables.length ; i++) {
-			variables[i] = new MDDVariable("var"+i);
+			variables[i] = new MultiValuedVariable("var"+i);
 		}
-		int[] leaves = {0,1};
-		MDDFactory factory = new MDDFactory(variables, leaves);
+		MDDFactory factory = new MDDFactory(variables, 2);
 		base = c = factory.getNodeCount();
 		assertEquals(0, base);
 

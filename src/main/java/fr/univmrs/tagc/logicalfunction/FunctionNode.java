@@ -8,7 +8,7 @@ import fr.univmrs.tagc.javaMDD.MDDFactory;
  * @author Fabrice Lopez: initial implementation
  * @author Aurelien Naldi: adaptation
  */
-public interface BooleanNode {
+public interface FunctionNode {
 
 	/**
 	 * @param par if true, add surrounding parenthesis.

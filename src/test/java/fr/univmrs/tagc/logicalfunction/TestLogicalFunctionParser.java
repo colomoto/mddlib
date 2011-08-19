@@ -12,27 +12,28 @@ public class TestLogicalFunctionParser extends TestCase {
 
 	public void testLogicalFunction() {
 		String[] operands = new String[] {"var1", "var2", "var3", "var4", "var5", "var6", "var7"};
-		SampleParser<String> parser = new SampleParser<String>(operands);
+		SimpleOperandFactory<String> opFactory = new SimpleOperandFactory<String>(operands);
+		FunctionParser parser = new FunctionParser();
 		
-		debug(parser, "var1", 1, 1);
-		debug(parser, "!var1", 1, 1);
-		debug(parser, "var1 & (var2 & var3)", 3, 1);
-		debug(parser, "var1 | var5", 2, 2);
-		debug(parser, "var1 & (var2 & var3) & var4 | var5", 5, 5);
-		debug(parser, "var1 & (var2 & var3) & var4 | !var5", 5, 5);
-		debug(parser, "var1 & (var2 & var3) & var4 | var5 | (var6 & var7)", 7, 9);
+		debug(parser, opFactory, "var1", 1, 1);
+		debug(parser, opFactory, "!var1", 1, 1);
+		debug(parser, opFactory, "var1 & (var2 & var3)", 3, 1);
+		debug(parser, opFactory, "var1 | var5", 2, 2);
+		debug(parser, opFactory, "var1 & (var2 & var3) & var4 | var5", 5, 5);
+		debug(parser, opFactory, "var1 & (var2 & var3) & var4 | !var5", 5, 5);
+		debug(parser, opFactory, "var1 & (var2 & var3) & var4 | var5 | (var6 & var7)", 7, 9);
 	}
 
-	public static void debug(SampleParser<String> parser, String function, int nodeCount, int solutionCount) {
-		BooleanNode f = parser.compile(function);
-		MDDFactory factory = parser.getMDDFactory();
-		int node = f.getMDD(factory);
+	public static void debug(FunctionParser parser, OperandFactory opFactory, String function, int nodeCount, int solutionCount) {
+		FunctionNode f = parser.compile(opFactory, function);
+		MDDFactory ddFactory = opFactory.getMDDFactory();
+		int node = f.getMDD(ddFactory);
 
 //		System.out.println("------------------\n"+function);
 //		factory.print(node);
-		assertEquals(nodeCount, factory.getNodeCount());
-		assertEquals(solutionCount, factory.count_positive_path(node));
-		factory.free(node);
-		assertEquals(0, factory.getNodeCount());
+		assertEquals(nodeCount, ddFactory.getNodeCount());
+		assertEquals(solutionCount, ddFactory.count_positive_path(node));
+		ddFactory.free(node);
+		assertEquals(0, ddFactory.getNodeCount());
 	}
 }

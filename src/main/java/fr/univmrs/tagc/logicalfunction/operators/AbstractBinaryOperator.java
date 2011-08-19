@@ -4,7 +4,7 @@ import java.util.Stack;
 
 import fr.univmrs.tagc.javaMDD.MDDFactory;
 import fr.univmrs.tagc.javaMDD.MDDOperator;
-import fr.univmrs.tagc.logicalfunction.BooleanNode;
+import fr.univmrs.tagc.logicalfunction.FunctionNode;
 
 /**
  * Common methods for nodes denoting binary operators (and, or).
@@ -13,13 +13,13 @@ import fr.univmrs.tagc.logicalfunction.BooleanNode;
  * @author Aurelien Naldi: adaptation
  */
 public abstract class AbstractBinaryOperator extends AbstractOperator {
-	protected BooleanNode leftArg, rightArg;
+	protected FunctionNode leftArg, rightArg;
 	
-	public AbstractBinaryOperator(BooleanNode leftArg, BooleanNode rightArg) {
+	public AbstractBinaryOperator(FunctionNode leftArg, FunctionNode rightArg) {
 		this.leftArg = leftArg;
 		this.rightArg = rightArg;
 	}
-	public AbstractBinaryOperator(Stack<BooleanNode> stack) {
+	public AbstractBinaryOperator(Stack<FunctionNode> stack) {
 		rightArg = stack.pop();
 		leftArg = stack.pop();
 	}
@@ -51,8 +51,8 @@ public abstract class AbstractBinaryOperator extends AbstractOperator {
 	}
 	
 	@Override
-	public BooleanNode[] getArgs() {
-	    BooleanNode[] r = new BooleanNode[2];
+	public FunctionNode[] getArgs() {
+	    FunctionNode[] r = new FunctionNode[2];
 	    r[0] = leftArg;
 	    r[1] = rightArg;
 	    return r;

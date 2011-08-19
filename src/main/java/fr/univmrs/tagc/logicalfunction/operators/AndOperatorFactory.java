@@ -4,7 +4,7 @@ import java.util.Stack;
 
 import fr.univmrs.tagc.javaMDD.MDDOperator;
 import fr.univmrs.tagc.javaMDD.operators.MDDBaseOperators;
-import fr.univmrs.tagc.logicalfunction.BooleanNode;
+import fr.univmrs.tagc.logicalfunction.FunctionNode;
 import fr.univmrs.tagc.logicalfunction.OperatorFactory;
 
 /**
@@ -37,11 +37,11 @@ public class AndOperatorFactory implements OperatorFactory {
 	}
 
 	@Override
-	public BooleanNode getNode(Stack<BooleanNode> stack) {
+	public FunctionNode getNode(Stack<FunctionNode> stack) {
 		return new AndOperator(stack);
 	}
 	
-	public BooleanNode getNode(BooleanNode n1, BooleanNode n2) {
+	public FunctionNode getNode(FunctionNode n1, FunctionNode n2) {
 		return new AndOperator(n1, n2);
 	}
 }
@@ -54,11 +54,11 @@ public class AndOperatorFactory implements OperatorFactory {
  */
 class AndOperator extends AbstractBinaryOperator {
 
-	public AndOperator(Stack<BooleanNode> stack) {
+	public AndOperator(Stack<FunctionNode> stack) {
 		super(stack);
 	}
 
-	public AndOperator(BooleanNode leftArg, BooleanNode rightArg) {
+	public AndOperator(FunctionNode leftArg, FunctionNode rightArg) {
 		super(leftArg, rightArg);
 	}
 

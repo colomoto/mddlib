@@ -179,7 +179,7 @@ abstract public class AbstractOperator implements MDDOperator {
 			int id = nodes[i];
 			if (f.isleaf(id)) {
 				nodes[i] = nodes[leafcount];
-				nodes[leafcount] = f.getLeafValue(id);
+				nodes[leafcount] = id;
 				leafcount++;
 			} else {
 				int level = f.getLevel(id);

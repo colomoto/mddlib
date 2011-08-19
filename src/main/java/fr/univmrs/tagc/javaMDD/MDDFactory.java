@@ -5,14 +5,17 @@ package fr.univmrs.tagc.javaMDD;
  * of a collection of multi-valued decision diagrams (MDDs).
  * <p>
  * <br>The factory has:
+ * <ul>
  *  <li> a set of leaves, defined from start and that can not be changed,</li>
  *  <li> a list of variables. New ones can be added afterwards, and the
  *    names can be changed but changing max values resets the factory</li>
+ * </ul>
  * <p>
- * The content is stored in a large integer array, divided into blocs.
- * Each bloc denotes a MDD node, providing its level and list of children.
- * To avoid duplication, a hasmap-like structure allows to find existing
- * nodes quickly.
+ * A number of leaves are defined when creating the factory. They are numbered
+ * <code>[0...nbleaves[</code>. Negative leaves or holes in the values are not allowed, but you
+ * are free to map indices to the values of your choice (including inside custom operators).
+ * <br>
+ * The same leaf can thus refer to different values, depending on the context.
  * <p>
  * Nodes can be created using the get_bnode and get_mnode methods 
  * (for Boolean and multi-valued nodes respectively), which create
@@ -24,14 +27,15 @@ package fr.univmrs.tagc.javaMDD;
  * but it was designed to help creating custom ones.
  * A group-merging method allows to efficiently merge many nodes using the same operation.
  * <p>
+ * The content is stored in a large integer array, divided into blocs.
+ * Each bloc denotes a MDD node, providing its level and list of children.
+ * To avoid duplication, a hashmap-like structure allows to find existing
+ * nodes quickly.
+ * <p>
  * Data blocs contain a reference counter, which allows to reuse the space
  * when nodes are no longer used. For this, call the free method with a node ID
  * when you stop using it. Make sure to forget the ID as any further use would
  * result in unexpected results.
- * <p>
- * Variable reordering and similar optimisations are not implemented nor planned,
- * If you need them, consider using JavaBDD or another pure-BDD library. If you
- * know a similarly optimised pure-java MDD library, please let me know.
  * 
  * @author Aurelien Naldi
  */
@@ -52,7 +56,7 @@ public class MDDFactory {
 	private static final boolean CANFREE=true;
 	private static final boolean CANFREEHASH=CANFREE;
 	
-	private MDDVariable[] variables;
+	private MultiValuedVariable[] variables;
 	private int blocsize;
 
 	private int[] hashcodes;
@@ -74,12 +78,41 @@ public class MDDFactory {
 	 * Create a new MDDFactory using the default capacity.
 	 * 
 	 * @param variables		the list of variables that can be used.
-	 * @param leaves		the list of values that can be reached.
+	 * @param nbleaves		the number of values that can be reached.
 	 * 
-	 * @see #MDDFactory(int, MDDVariable[], int[])
+	 * @see #MDDFactory(int, MultiValuedVariable[], int)
 	 */
-	public MDDFactory(MDDVariable[] variables, int[] leaves) {
-		this(DEFAULT_CAPACITY, variables, leaves);
+	public MDDFactory(MultiValuedVariable[] variables, int nbleaves) {
+		this(DEFAULT_CAPACITY, variables, nbleaves);
+	}
+	
+	/**
+	 * Create a new MDDFactory.
+	 * 
+	 * @param capacity		number of nodes that can be stored in the initially reserved space.
+	 * @param variables		the list of variables that can be used.
+	 * @param nbleaves		the number of values that can be reached.
+	 */
+	public MDDFactory(int capacity, MultiValuedVariable[] variables, int nbleaves) {
+		this.variables = variables;
+		this.nbleaves = nbleaves;
+		blocsize = 2;
+		for (MultiValuedVariable var: variables) {
+			if (var.nbval > blocsize ) {
+				blocsize  = var.nbval;
+			}
+		}
+		blocsize += INC_VALUES;  // add INC_VALUES cells in the bloc for metadata (type, usage count)
+		
+		hashcodes = new int[capacity*2];
+		hashitems = new int[DEFAULT_HASHITEMS];
+		reset_hash();
+
+		lastbloc = nbleaves;
+		blocs = new int[nbleaves + capacity*blocsize];
+		for (int i=0 ; i<nbleaves ; i++) {
+			blocs[i] = i;
+		}
 	}
 	
 	/**
@@ -91,8 +124,8 @@ public class MDDFactory {
 	 * 
 	 * @param newVariables
 	 */
-	public void setVariables(MDDVariable[] newVariables) {
-		MDDVariable[] oldVariables = variables;
+	public void setVariables(MultiValuedVariable[] newVariables) {
+		MultiValuedVariable[] oldVariables = variables;
 		this.variables = newVariables;
 		if (variables.length < oldVariables.length) {
 			invalidate();
@@ -109,7 +142,7 @@ public class MDDFactory {
 	/**
 	 * @return the list of variables that can be used in this factory.
 	 */
-	public MDDVariable[] getVariables() {
+	public MultiValuedVariable[] getVariables() {
 		return variables;
 	}
 	
@@ -142,7 +175,7 @@ public class MDDFactory {
 			System.out.println(prefix+node);
 			return;
 		}
-		MDDVariable var = variables[blocs[node]];
+		MultiValuedVariable var = variables[blocs[node]];
 		System.out.println(prefix+var.name);
 		prefix += "   ";
 		for (int i=0 ; i<var.nbval ; i++) {
@@ -158,36 +191,6 @@ public class MDDFactory {
 	 */
 	private void invalidate() {
 		System.err.println("invalidate MDDFactory not yet implemented");
-	}
-	
-	
-	/**
-	 * Create a new MDDFactory.
-	 * 
-	 * @param capacity		number of nodes that can be stored in the initially reserved space.
-	 * @param variables		the list of variables that can be used.
-	 * @param leaves		the list of values that can be reached.
-	 */
-	public MDDFactory(int capacity, MDDVariable[] variables, int[] leaves) {
-		this.variables = variables;
-		blocsize = 2;
-		for (MDDVariable var: variables) {
-			if (var.nbval > blocsize ) {
-				blocsize  = var.nbval;
-			}
-		}
-		blocsize += INC_VALUES;  // add INC_VALUES cells in the bloc for metadata (type, usage count)
-		
-		hashcodes = new int[capacity*2];
-		hashitems = new int[DEFAULT_HASHITEMS];
-		reset_hash();
-
-		nbleaves = leaves.length;
-		lastbloc = nbleaves;
-		blocs = new int[nbleaves + capacity*blocsize];
-		for (int i=0 ; i<leaves.length ; i++) {
-			blocs[i] = leaves[i];
-		}
 	}
 	
 	/**
@@ -278,18 +281,18 @@ public class MDDFactory {
 		return use(pos);
 	}
 
-	/**
-	 * Get the value of a leaf.
-	 * 
-	 * @param id
-	 * @return the value of the leaf or -1 if the ID does not point to a leaf.
-	 */
-	public int getLeafValue(int id) {
-		if (id < nbleaves) {
-			return blocs[id];
-		}
-		return -1;
-	}
+//	/**
+//	 * Get the value of a leaf.
+//	 * 
+//	 * @param id
+//	 * @return the value of the leaf or -1 if the ID does not point to a leaf.
+//	 */
+//	public int getLeafValue(int id) {
+//		if (id < nbleaves) {
+//			return blocs[id];
+//		}
+//		return -1;
+//	}
 	
 	/**
 	 * Free a node. If it is not used at all anymore, it will be removed from the data structure.
@@ -936,12 +939,12 @@ public class MDDFactory {
 			return;
 		}
 		int curValue = values[cur]+1;
-		MDDVariable var = variables[getLevel(node)];
+		MultiValuedVariable var = variables[getLevel(node)];
 		if (curValue < var.nbval) {
 			values[cur]++;
 			int next = getChild(node, curValue);
 			if (isleaf(next)) {
-				tracking[1] = getLeafValue(next);
+				tracking[1] = next;
 				return;
 			}
 			tracking[0]++;
