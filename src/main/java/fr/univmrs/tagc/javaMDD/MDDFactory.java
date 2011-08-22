@@ -149,7 +149,7 @@ public class MDDFactory {
 	/**
 	 * 
 	 * @param o
-	 * @return the ID of this variable in the factory, or -1 of not found
+	 * @return the ID of this variable in the factory, or -1 if not found
 	 */
 	public int getVariableID(Object o) {
 		// TODO: make getVariableID faster if needed
@@ -186,10 +186,9 @@ public class MDDFactory {
 	/**
 	 * Invalidate the factory: destroy all content and warn factory listeners
 	 * that they should not keep pointers to existing nodes.
-	 * <p>
-	 * FIXME: invalidate is not yet implemented.
 	 */
 	private void invalidate() {
+		 // FIXME: invalidate is not yet implemented.
 		System.err.println("invalidate MDDFactory not yet implemented");
 	}
 	
@@ -421,8 +420,7 @@ public class MDDFactory {
 	 */
 	private void free_hashiten(int item) {
 		if (item < 0) {
-			System.err.println("item not in hash !!!!");
-			return;
+			throw new RuntimeException("Trying to free a negative hashitem");
 		}
 		// free the hash item
 		if (item == lastitem-2) {
@@ -917,48 +915,6 @@ public class MDDFactory {
 	public int getNbVariables() {
 		return variables.length;
 	}
-
-	/**
-	 * Find the next leaf in this MDD and store the path in the provided array.
-	 * This function is a helper for the LeafPath Iterator.
-	 * 
-	 * @param indices	the path in terms of MDD nodes (for backtracking)
-	 * @param values	the next value to be used for these nodes (for backtracking)
-	 * @param tracking  the index of the current position in the previous arrays and the value of the current leaf
-	 */
-	public void findNextLeaf(int[] indices, int[] values, int[] tracking) {
-		int cur = tracking[0];
-		if (cur < 0) {
-			System.err.println("findNext called after exploration is finished");
-			return;
-		}
-		
-		int node = indices[cur];
-		if (isleaf(node)) {
-			System.err.println("findNext went too far");
-			return;
-		}
-		int curValue = values[cur]+1;
-		MultiValuedVariable var = variables[getLevel(node)];
-		if (curValue < var.nbval) {
-			values[cur]++;
-			int next = getChild(node, curValue);
-			if (isleaf(next)) {
-				tracking[1] = next;
-				return;
-			}
-			tracking[0]++;
-			indices[cur+1] = next;
-			values[cur+1] = -1;
-		} else {
-			tracking[0]--;
-			if (cur == 0) {
-				return;
-			}
-		}
-		findNextLeaf(indices, values, tracking);
-	}
-
 
 	/**
 	 * Infer the effect of a variable in a given MDD.
