@@ -19,7 +19,6 @@ public class MultiValuedVariable {
 	public final String name;
 	public final Object key;
 	final byte nbval;
-	final byte spanbloc;
 	
 	public MultiValuedVariable (String name) {
 		this(name, 2);
@@ -28,12 +27,10 @@ public class MultiValuedVariable {
 		this.key = name;
 		this.name = name;
 		this.nbval = (byte)nbval;
-		this.spanbloc = 0;
 	}
 	public MultiValuedVariable (Object key, String name, int nbval) {
 		this.key = key;
 		this.name = name;
 		this.nbval = (byte)nbval;
-		this.spanbloc = 0;
 	}
 }

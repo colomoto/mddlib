@@ -29,8 +29,7 @@ package fr.univmrs.tagc.javaMDD;
  * <p>
  * The content is stored in a large integer array, divided into blocs.
  * Each bloc denotes a MDD node, providing its level and list of children.
- * To avoid duplication, a hashmap-like structure allows to find existing
- * nodes quickly.
+ * To avoid duplication, a hashmap allows to find existing nodes quickly.
  * <p>
  * Data blocs contain a reference counter, which allows to reuse the space
  * when nodes are no longer used. For this, call the free method with a node ID
@@ -67,7 +66,7 @@ public class MDDFactory {
 	private int freeBloc = -1;
 	private int freeItem = -1;
 
-	// first free position at the end of data/hashitems arrays
+	// first free position at the end of data/hash-items arrays
 	private int lastitem = 0;
 	private int lastbloc = 0;
 
@@ -164,9 +163,9 @@ public class MDDFactory {
 	
 	/**
 	 * Debug helper: print a MDD on standard output.
-	 * @param node
+	 * @param node  the node index
 	 */
-	public void print(int node) {
+	public void printNode(int node) {
 		print(node, "");
 	}
 	
@@ -279,19 +278,6 @@ public class MDDFactory {
 		}
 		return use(pos);
 	}
-
-//	/**
-//	 * Get the value of a leaf.
-//	 * 
-//	 * @param id
-//	 * @return the value of the leaf or -1 if the ID does not point to a leaf.
-//	 */
-//	public int getLeafValue(int id) {
-//		if (id < nbleaves) {
-//			return blocs[id];
-//		}
-//		return -1;
-//	}
 	
 	/**
 	 * Free a node. If it is not used at all anymore, it will be removed from the data structure.
@@ -335,8 +321,6 @@ public class MDDFactory {
 		blocs[pos] = -1;
 		if (lastbloc == pos+blocsize) {
 			lastbloc = pos;
-			// TODO: further decrease lastbloc if the previous blocs are also free?
-			// find out how many are free and remove them from the chained list.
 		} else {
 			blocs[pos+1] = freeBloc;
 			freeBloc = pos;
@@ -381,7 +365,7 @@ public class MDDFactory {
 				// re-chain back this hashcode
 				hashcodes[hash] = hashitems[itemPos];
 				hashcodes[hash+1] = hashitems[itemPos+1];
-				free_hashiten(itemPos);
+				free_hashitem(itemPos);
 			}
 			return;
 		}
@@ -403,7 +387,7 @@ public class MDDFactory {
 					// update chain in the hashitems array
 					hashitems[prevItem+1] = nextItem;
 				}
-				free_hashiten(itemPos);
+				free_hashitem(itemPos);
 				return;
 			}
 			prevItem = itemPos;
@@ -418,15 +402,13 @@ public class MDDFactory {
 	 * 
 	 * @param item
 	 */
-	private void free_hashiten(int item) {
+	private void free_hashitem(int item) {
 		if (item < 0) {
 			throw new RuntimeException("Trying to free a negative hashitem");
 		}
 		// free the hash item
 		if (item == lastitem-2) {
 			lastitem = item;
-			// TODO: further decrease lastitem if the previous items are also free:
-			// track down to find how many are free and remove them from the chained list.
 		} else {
 			hashitems[item]   = -1;
 			hashitems[item+1] = freeItem;
@@ -689,24 +671,6 @@ public class MDDFactory {
 		return pos;
 	}
 
-//	/**
-//	 * Get a group of contiguous data blocs.
-//	 * For now it only allocates contiguous blocs at the end.
-//	 * 
-//	 * @param nb the number of blocs needed
-//	 * @return the ID of the starting bloc
-//	 */
-//	private int get_free_blocs(int nb) {
-//		int pos = lastbloc;
-//		// search in empty slots ?
-//		lastbloc += nb*blocsize;
-//		if (lastbloc > blocs.length) {
-//			blocs = extend_array(blocs);
-//		}
-//		
-//		return pos;
-//	}
-
 	/**
 	 * extend an array: allocate a bigger array and copy existing data.
 	 */
@@ -741,9 +705,6 @@ public class MDDFactory {
 			
 			// link it
 			place_hash(i, hash);
-			
-			// FIXME: update if spanning over several blocs is implemented
-			// i += variables[idvar].spanbloc;
 		}
 	}
 
