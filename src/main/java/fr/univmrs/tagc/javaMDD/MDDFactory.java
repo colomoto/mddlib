@@ -204,6 +204,10 @@ public class MDDFactory {
 		if (lchild == rchild) {
 			return use(lchild);
 		}
+		if ((!isleaf(lchild) && blocs[lchild] <= var) || (!isleaf(rchild) && blocs[rchild] <= var)) {
+			System.err.println("Invalid request");
+			return -1;
+		}
 		int hash = compute_bhash(var, lchild, rchild);
 		boolean hashexists = hashcodes[hash] != -1;
 		if (hashexists) {
@@ -242,13 +246,18 @@ public class MDDFactory {
 	public int get_mnode(int var, int[] children) {
 		// check that the children are not all equal
 		int child = children[0];
-		for (int i=0 ; i<children.length ; i++) {
-			if (children[i] != child) {
+		for (int c:children) {
+			if (c != child) {
 				child = -1;
 				break;
 			}
+			
+			if (!isleaf(c) && blocs[c] <= var) {
+				System.err.println("Invalid node request!");
+				return -1;
+			}
 		}
-		if (child > 0) {
+		if (child > -1) {
 			return use(child);
 		}
 		
