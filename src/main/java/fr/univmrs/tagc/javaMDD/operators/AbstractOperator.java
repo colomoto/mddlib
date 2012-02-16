@@ -117,7 +117,7 @@ abstract public class AbstractOperator implements MDDOperator {
 			case 0:
 				throw new RuntimeException("Need at least one node to merge");
 			case 1:
-				return nodes[0];
+				return f.use(nodes[0]);
 			case 2:
 				return combine(f, nodes[0], nodes[1]);
 		}
