@@ -974,4 +974,33 @@ public class MDDFactory {
 	public int getNbValues(int level) {
 		return variables[level].nbval;
 	}
+
+	/**
+	 * Find the leaf reached for a given variable assignment
+	 * 
+	 * @param node
+	 * @param values
+	 * @return
+	 */
+	public int reach(int node, int[] values) {
+		while (!isleaf(node)) {
+			int level = getLevel(node);
+			node = getChild(node, values[level]);
+		}
+		return node;
+	}
+	/**
+	 * Find the leaf reached for a given variable assignment
+	 * 
+	 * @param node
+	 * @param values
+	 * @return
+	 */
+	public byte reach(int node, byte[] values) {
+		while (!isleaf(node)) {
+			int level = getLevel(node);
+			node = getChild(node, values[level]);
+		}
+		return (byte)node;
+	}
 }
