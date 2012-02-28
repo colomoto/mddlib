@@ -97,6 +97,7 @@ public class PathSearcher implements Iterable<Integer> {
 
 		// reset data structure
 		backtrack.reset(node);
+		leaf = 0;
 		return path;
 	}
 	
