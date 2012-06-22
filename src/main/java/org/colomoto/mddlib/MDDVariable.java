@@ -184,7 +184,7 @@ public class MDDVariable {
 			return false;
 		}
 
-		return other.order > this.order;
+		return other.order < this.order;
 	}
 	
 	public static MDDVariable selectFirstVariable(MDDVariable v1, MDDVariable v2) {
