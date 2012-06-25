@@ -61,6 +61,10 @@ public class MDDStoreImpl extends MDDManagerAbstract implements MDDStore {
 	private int nbnodes = 0;
 	private final int nbleaves;
 
+	public MDDManager getManager(List<?> order) {
+		return MDDManagerProxy.getProxy(this, order);
+	}
+	
 	/**
 	 * Create a new MDDFactory using the default capacity.
 	 * Note that this constructor should be called through {@link MDDManagerFactory}, not directly.
@@ -143,6 +147,11 @@ public class MDDStoreImpl extends MDDManagerAbstract implements MDDStore {
 			return null;
 		}
 		return variables[getLevel(n)];
+	}
+
+	@Override
+	public int getVariableIndex(MDDVariable var) {
+		return var.order;
 	}
 
 	@Override
