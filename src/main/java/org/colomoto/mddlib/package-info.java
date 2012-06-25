@@ -2,7 +2,7 @@
  * Simple Multi-valued Decision Diagram (MDD) toolkit.
  * <p>
  * Given the definition of a set of multi-valued variables (represented as <code>MDDVariable</code>),
- * the <code>MDDFactory</code> enables the efficient storage of logical functions depending on the value
+ * the <code>MDDManager</code> enables the efficient storage of logical functions depending on the value
  * of these variables.
  * The decision diagrams can also be "combined" using <code>MDDOperator</code>.
  * <p>

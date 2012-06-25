@@ -67,7 +67,7 @@
 				<configuration>
 					<manifestLocation>META-INF</manifestLocation>
 					<instructions>
-						<Export-Package>fr.univmrs.tagc*</Export-Package>
+						<Export-Package>org.colomoto.mddlib*</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

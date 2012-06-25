@@ -4,10 +4,10 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 
 /**
- * The raw store used as backend for a MDDManager.
+ * Interface for the raw MDD store.
+ * A <code>MDDStore</code> is a <code>MDDManager</code>, which can also be used as backend for  <code>MDDManagerProxy</code>
  * 
  * @author Aurelien Naldi
- *
  */
 public interface MDDStore extends MDDManager {
 
