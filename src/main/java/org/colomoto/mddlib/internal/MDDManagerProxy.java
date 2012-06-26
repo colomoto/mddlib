@@ -46,9 +46,12 @@ public class MDDManagerProxy implements MDDManager {
 		}
 		
 		// save the order mapping and compute the reverse one
-		int[] factory2custom = new int[customOrder.size()];
+		int[] factory2custom = new int[rawVariables.length];
+		for (i=0 ; i<factory2custom.length ; i++) {
+			factory2custom[i] = -1;
+		}
 		i=0;
-		for (int k: factory2custom) {
+		for (int k: custom2factory) {
 			if (k >= 0) {
 				factory2custom[k] = i;
 			}
