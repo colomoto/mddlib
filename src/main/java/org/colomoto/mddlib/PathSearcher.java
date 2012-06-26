@@ -171,7 +171,6 @@ class PathFoundIterator implements Iterator<Integer> {
 
 class PathBacktrack {
 
-//	final MultiValuedVariable[] variables;
 	final MDDManager factory;
 	final int[] indices, values;
 
@@ -199,8 +198,7 @@ class PathBacktrack {
 		}
 		for (int idx = 0; idx <= pos; idx++) {
 			MDDVariable var = factory.getNodeVariable(indices[idx]);
-			// FIXME: map order if needed
-			int i = var.order;
+			int i = factory.getVariableIndex(var);
 			path[i] = values[idx];
 		}
 	}
