@@ -26,7 +26,7 @@ public abstract class AbstractOperand implements FunctionNode {
 	/**
 	 * @return the key associated to this MDD variable.
 	 * 
-	 * @see MDDManager#getVariableID(Object)
+	 * @see MDDManager#getVariableForKey(Object)
 	 */
 	abstract public Object getMDDVariableKey();
 	
@@ -45,13 +45,13 @@ public abstract class AbstractOperand implements FunctionNode {
 	}
 
 	@Override
-	public int getMDD(MDDManager factory) {
-		return getMDD(factory, false);
+	public int getMDD(MDDManager ddmanager) {
+		return getMDD(ddmanager, false);
 	}
 
 	@Override
-	public int getMDD(MDDManager factory, boolean reversed) {
-		MDDVariable var = factory.getVariableForKey(getMDDVariableKey());
+	public int getMDD(MDDManager ddmanager, boolean reversed) {
+		MDDVariable var = ddmanager.getVariableForKey(getMDDVariableKey());
 		if (reversed) {
 			return var.getSimpleNode(1, 0, getRangeStart(), getRangeEnd());
 		}

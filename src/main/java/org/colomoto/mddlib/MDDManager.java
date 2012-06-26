@@ -143,7 +143,6 @@ public interface MDDManager {
 	 */
 	int not(int node);
 
-
 	/**
 	 * Determine the relation between two nodes.
 	 * Mainly used by operators to select the appropriate code path.
@@ -155,13 +154,11 @@ public interface MDDManager {
 	 */
 	NodeRelation getRelation(int first, int other);
 	
-	
 	/**
 	 * @return the number of non-leaf nodes stored in the manager.
 	 */
 	int getNodeCount();
 
-	
 	/**
 	 * Infer the effect of a variable in a given MDD.
 	 * 
@@ -171,7 +168,6 @@ public interface MDDManager {
 	 */
 	int getSign(int node, MDDVariable pivot);
 
-
 	/**
 	 * Find the leaf reached for a given variable assignment
 	 * 
@@ -180,5 +176,5 @@ public interface MDDManager {
 	 * @return
 	 */
 	byte reach(int node, byte[] values);
-	
+
 }

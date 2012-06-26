@@ -66,20 +66,18 @@ public class MDDStoreImpl implements MDDStore {
 	}
 	
 	/**
-	 * Create a new MDDFactory using the default capacity.
+	 * Create a new MDDStore using the default capacity.
 	 * Note that this constructor should be called through {@link MDDManagerFactory}, not directly.
 	 * 
 	 * @param variables		the list of variables that can be used.
 	 * @param nbleaves		the number of values that can be reached.
-	 * 
-	 * @see #MDDFactory(int, MDDVariable[], int)
 	 */
 	public MDDStoreImpl(Collection<?> keys, int nbleaves) {
 		this(DEFAULT_CAPACITY, keys, nbleaves);
 	}
 
 	/**
-	 * Create a new MDDFactory.
+	 * Create a new MDDStore.
 	 * 
 	 * @param capacity		number of nodes that can be stored in the initially reserved space.
 	 * @param variables		the list of variables that can be used.

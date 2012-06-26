@@ -17,36 +17,36 @@ public class TestMDD extends TestCase {
 		for (int i = 0; i < 5; i++) {
 			keys.add("var" + i);
 		}
-		MDDManager factory = MDDManagerFactory.getManager( keys, 10);
-		MDDVariable[] variables = factory.getAllVariables();
+		MDDManager ddmanager = MDDManagerFactory.getManager( keys, 10);
+		MDDVariable[] variables = ddmanager.getAllVariables();
 		
 		int c = 0;
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
 		variables[4].getNode(0, 1);
 		c++;
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
 		int n1 = variables[4].getNode(0, 1);
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
 		int n2 = variables[3].getNode(0, 0);
 		assertEquals(n2, 0);
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
 		int node = variables[4].getNode(1, 0);
 		c++;
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
 		int newnode = variables[4].getNode(node, node);
 		assertEquals(node, newnode);
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
 		newnode = variables[2].getNode(n1, n2);
 		c++;
-		assertEquals(c, factory.getNodeCount());
+		assertEquals(c, ddmanager.getNodeCount());
 
-		PathSearcher paths = new PathSearcher(factory);
+		PathSearcher paths = new PathSearcher(ddmanager);
 		int[] path = paths.setNode(newnode);
 		int nbpaths = 0;
 		for (int leaf : paths) {

@@ -12,7 +12,7 @@ import org.colomoto.mddlib.internal.MDDStore;
  * <p>
  * A variable has a name, an optional associated object and set of possible values.
  * For the sake of simplicity, only the number of possible values is defined,
- * the factory will use the integer range [0..nbval[.
+ * the MDD manager will use the integer range [0..nbval[.
  * <p>
  * A Boolean variable uses 2 values and will be mapped to the [0,1] interval.
  * <br>A ternary variable uses 3 values and will be mapped to the [0,2] interval.

@@ -68,8 +68,8 @@ class NotOperator extends AbstractUnaryOperator {
 	}
   
 	@Override
-	public int getMDD(MDDManager factory, boolean reversed) {
+	public int getMDD(MDDManager ddmanager, boolean reversed) {
 		// FIXME: the "reversed" trick works for simple cases but is ugly and will likely break for complex cases
-		return arg.getMDD(factory, !reversed);
+		return arg.getMDD(ddmanager, !reversed);
 	}
 }

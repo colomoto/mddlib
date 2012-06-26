@@ -13,8 +13,8 @@ import org.colomoto.mddlib.NodeRelation;
  * The main method for two-way merge is not implemented here and is the only requirement for implementors.
  * <p>
  * To properly support multiple merge, implementors are encouraged to override
- * <code>multiple_leaves(MDDFactory, int[])</code>
- * and <code>recurse_multiple(MDDFactory, int[], int, int)</code>.
+ * <code>multiple_leaves(MDDManager, int[])</code>
+ * and <code>recurse_multiple(MDDManager, int[], int, int)</code>.
  * 
  * @see MDDBaseOperators
  * @see AbstractFlexibleOperator
@@ -43,55 +43,55 @@ abstract public class AbstractOperator implements MDDOperator {
 
 	/**
 	 * Common logic for recursive operation. This method is a helper
-	 * for specialised implementations of <code>combine(MDDFactory, int, int)</code>.
+	 * for specialised implementations of <code>combine(MDDManager, int, int)</code>.
 	 * 
-	 * @param f
+	 * @param ddmanager
 	 * @param status
 	 * @param first
 	 * @param other
 	 * 
 	 * @return the resulting node index
 	 */
-	public int recurse(MDDManager f, NodeRelation status, int first, int other) {
+	public int recurse(MDDManager ddmanager, NodeRelation status, int first, int other) {
 		switch (status) {
 		case LN:
 		case NNf:
-			MDDVariable var = f.getNodeVariable(other);
+			MDDVariable var = ddmanager.getNodeVariable(other);
 			if (var.nbval == 2) {
-				int l = combine(f, first, f.getChild(other,0));
-				int r = combine(f, first, f.getChild(other,1));
+				int l = combine(ddmanager, first, ddmanager.getChild(other,0));
+				int r = combine(ddmanager, first, ddmanager.getChild(other,1));
 				return var.getNodeFree(l, r);
 			} else {
 				int[] children = new int[var.nbval];
 				for (int i=0 ; i<children.length ; i++) {
-					children[i] = combine(f, first, f.getChild(other, i));
+					children[i] = combine(ddmanager, first, ddmanager.getChild(other, i));
 				}
 				return var.getNodeFree(children);
 			}
 		case NL:
 		case NNn:
-			var = f.getNodeVariable(first);
+			var = ddmanager.getNodeVariable(first);
 			if (var.nbval == 2) {
-				int l = combine(f, f.getChild(first,0), other);
-				int r = combine(f, f.getChild(first,1), other);
+				int l = combine(ddmanager, ddmanager.getChild(first,0), other);
+				int r = combine(ddmanager, ddmanager.getChild(first,1), other);
 				return var.getNodeFree(l, r);
 			} else {
 				int[] children = new int[var.nbval];
 				for (int i=0 ; i<children.length ; i++) {
-					children[i] = combine(f, f.getChild(first,i), other);
+					children[i] = combine(ddmanager, ddmanager.getChild(first,i), other);
 				}
 				return var.getNodeFree(children);
 			}
 		case NN:
-			var = f.getNodeVariable(first);
+			var = ddmanager.getNodeVariable(first);
 			if (var.nbval == 2) {
-				int l = combine(f, f.getChild(first,0), f.getChild(other,0));
-				int r = combine(f, f.getChild(first,1), f.getChild(other,1));
+				int l = combine(ddmanager, ddmanager.getChild(first,0), ddmanager.getChild(other,0));
+				int r = combine(ddmanager, ddmanager.getChild(first,1), ddmanager.getChild(other,1));
 				return var.getNodeFree(l, r);
 			} else {
 				int[] children = new int[var.nbval];
 				for (int i=0 ; i<children.length ; i++) {
-					children[i] = combine(f, f.getChild(first,i), f.getChild(other,i));
+					children[i] = combine(ddmanager, ddmanager.getChild(first,i), ddmanager.getChild(other,i));
 				}
 				return var.getNodeFree(children);
 			}
@@ -104,32 +104,32 @@ abstract public class AbstractOperator implements MDDOperator {
 	 * to pairs of nodes unless multiple merge is marked as supported.
 	 * <p>
 	 * 
-	 * @param f			the factory in which the nodes are stored
+	 * @param ddmanager	the MDD manager in which the nodes are stored
 	 * @param nodes		the roots of the MDDs to combine
 	 * 
 	 * @return			the root node of the combined MDD. It can be a new or an existing node.
 	 */
 	@Override
-	public int combine(MDDManager f, int[] nodes) {
+	public int combine(MDDManager ddmanager, int[] nodes) {
 		switch (nodes.length) {
 			case 0:
 				throw new RuntimeException("Need at least one node to merge");
 			case 1:
-				return f.use(nodes[0]);
+				return ddmanager.use(nodes[0]);
 			case 2:
-				return combine(f, nodes[0], nodes[1]);
+				return combine(ddmanager, nodes[0], nodes[1]);
 		}
 		
 		int result = nodes[0];
 		if (multipleMerge) {
-			return combine(f, nodes, 0);
+			return combine(ddmanager, nodes, 0);
 		}
 		
 		// fallback to a set of simple merges if multiple merge is not properly supported
 		int oldresult = 0;
 		for (int i=1 ; i<nodes.length ; i++) {
-			f.free(oldresult);
-			result = combine(f, result, nodes[i]);
+			ddmanager.free(oldresult);
+			result = combine(ddmanager, result, nodes[i]);
 			oldresult = result;
 		}
 		return result;
@@ -141,12 +141,12 @@ abstract public class AbstractOperator implements MDDOperator {
 	 * <p>
 	 * A series of two-nodes merges is performed as fallback.
 	 * 
-	 * @param f
+	 * @param ddmanager
 	 * @param leaves
 	 * 
 	 * @return the resulting node index
 	 */
-	protected int multiple_leaves(MDDManager f, int[] leaves) {
+	protected int multiple_leaves(MDDManager ddmanager, int[] leaves) {
 		if (leaves.length < 1) {
 			throw new RuntimeException("Need at least one node to merge");
 		}
@@ -154,8 +154,8 @@ abstract public class AbstractOperator implements MDDOperator {
 		// fallback to a set of simple merges if this method is not provided by the operator
 		int result = leaves[0], oldresult = 0;
 		for (int i=1 ; i<leaves.length ; i++) {
-			f.free(oldresult);
-			result = combine(f, result, leaves[i]);
+			ddmanager.free(oldresult);
+			result = combine(ddmanager, result, leaves[i]);
 			oldresult = result;
 		}
 		return result;
@@ -163,32 +163,32 @@ abstract public class AbstractOperator implements MDDOperator {
 	
 	/**
 	 * Actual implementation of the optimised multiple merge.
-	 * This method is called by <code>combine(MDDFactory, int[])</code>.
+	 * This method is called by <code>combine(MDDManager, int[])</code>.
 	 * 
-	 * @param f
+	 * @param ddmanager
 	 * @param nodes
 	 * @param leafcount
 	 * 
 	 * @return the resulting node index
 	 */
-	private int combine(MDDManager f, int[] nodes, int leafcount) {
+	private int combine(MDDManager ddmanager, int[] nodes, int leafcount) {
 		MDDVariable bestVar = null;
 		for (int i=leafcount ; i<nodes.length ; i++ ) {
 			int id = nodes[i];
-			if (f.isleaf(id)) {
+			if (ddmanager.isleaf(id)) {
 				nodes[i] = nodes[leafcount];
 				nodes[leafcount] = id;
 				leafcount++;
 			} else {
-				MDDVariable var = f.getNodeVariable(id);
+				MDDVariable var = ddmanager.getNodeVariable(id);
 				bestVar = MDDVariable.selectFirstVariable(bestVar, var);
 			}
 		}
 
 		if (leafcount == nodes.length) {
-			return multiple_leaves(f, nodes);
+			return multiple_leaves(ddmanager, nodes);
 		}
-		return recurse_multiple(f, nodes, leafcount, bestVar);
+		return recurse_multiple(ddmanager, nodes, leafcount, bestVar);
 	}
 
 	/**
@@ -212,14 +212,14 @@ abstract public class AbstractOperator implements MDDOperator {
 	/**
 	 * The recursive part of the multiple merge.
 	 * 
-	 * @param f
+	 * @param ddmanager
 	 * @param nodes
 	 * @param leafcount
 	 * @param bestVar
 	 * 
 	 * @return the resulting node index
 	 */
-	protected int recurse_multiple(MDDManager f, int[] nodes, int leafcount, MDDVariable bestVar) {
+	protected int recurse_multiple(MDDManager ddmanager, int[] nodes, int leafcount, MDDVariable bestVar) {
 		if (bestVar.nbval == 2) {
 			int lchild, rchild;
 			int[] lnodes = new int[nodes.length], rnodes = new int[nodes.length];
@@ -228,15 +228,15 @@ abstract public class AbstractOperator implements MDDOperator {
 			}
 			for (int i=leafcount ; i<nodes.length ; i++) {
 				int node = nodes[i];
-				if (f.getNodeVariable(node) == bestVar) {
-					lnodes[i] = f.getChild(node, 0);
-					rnodes[i] = f.getChild(node, 1);
+				if (ddmanager.getNodeVariable(node) == bestVar) {
+					lnodes[i] = ddmanager.getChild(node, 0);
+					rnodes[i] = ddmanager.getChild(node, 1);
 				} else {
 					lnodes[i] = rnodes[i] = node;
 				}
 			}
-			lchild = combine(f, lnodes, leafcount);
-			rchild = combine(f, rnodes, leafcount);
+			lchild = combine(ddmanager, lnodes, leafcount);
+			rchild = combine(ddmanager, rnodes, leafcount);
 			return bestVar.getNodeFree(lchild, rchild);
 		} else {
 			int[] children = new int[bestVar.nbval];
@@ -245,13 +245,13 @@ abstract public class AbstractOperator implements MDDOperator {
 				System.arraycopy(nodes, 0, nextnodes, 0, leafcount);
 				for (int i=leafcount ; i<nodes.length ; i++) {
 					int node = nodes[i];
-					if (f.getNodeVariable(node) == bestVar) {
-						nextnodes[i] = f.getChild(node, v);
+					if (ddmanager.getNodeVariable(node) == bestVar) {
+						nextnodes[i] = ddmanager.getChild(node, v);
 					} else {
 						nextnodes[i] = nodes[i];
 					}
 				}
-				children[v] = combine(f, nextnodes, leafcount);
+				children[v] = combine(ddmanager, nextnodes, leafcount);
 			}
 			return bestVar.getNodeFree(children);
 		}

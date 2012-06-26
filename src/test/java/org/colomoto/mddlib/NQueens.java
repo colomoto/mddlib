@@ -61,8 +61,8 @@ public class NQueens {
 				keys.add(i+","+j);
 			}
 		}
-		MDDManager f = MDDManagerFactory.getManager(keys, 2);
-		MDDVariable[] variables = f.getAllVariables();
+		MDDManager ddmanager = MDDManagerFactory.getManager(keys, 2);
+		MDDVariable[] variables = ddmanager.getAllVariables();
 		for (int i=0 ; i<nbvar ; i++) {
 			basics[i][0] = variables[i].getNode(1, 0);
 			basics[i][1] = variables[i].getNode(0, 1);
@@ -77,7 +77,7 @@ public class NQueens {
 			for (int j=0 ; j<N ; j++) {
 				elts[j] = basics[row+j][1];
 			}
-			all_cst[cstidx++] = MDDBaseOperators.OR.combine(f, elts);
+			all_cst[cstidx++] = MDDBaseOperators.OR.combine(ddmanager, elts);
 		}
 		
 		// each place on the board is in conflict with places on the same row, column or diagonal
@@ -87,19 +87,19 @@ public class NQueens {
 				pos = i*N+j;
 				for (int k=0 ; k<N ; k++) {
 					if (k>i) {
-						all_cst[cstidx++] = get_nand(f, basics, pos, k*N+j);
+						all_cst[cstidx++] = get_nand(ddmanager, basics, pos, k*N+j);
 					}
 					if (k>j) {
-						all_cst[cstidx++] = get_nand(f, basics, pos, i*N+k);
+						all_cst[cstidx++] = get_nand(ddmanager, basics, pos, i*N+k);
 
 						int dj = k-j;
 						int r = i+dj;
 						if (r<N) {
-							all_cst[cstidx++] = get_nand(f, basics, pos, r*N+k);
+							all_cst[cstidx++] = get_nand(ddmanager, basics, pos, r*N+k);
 						}
 						r = i-dj;
 						if (r>=0) {
-							all_cst[cstidx++] = get_nand(f, basics, pos, r*N+k);
+							all_cst[cstidx++] = get_nand(ddmanager, basics, pos, r*N+k);
 						}
 					}
 				}
@@ -107,24 +107,24 @@ public class NQueens {
 		}
 		int[] defined_cst = new int[cstidx];
 		System.arraycopy(all_cst, 0, defined_cst, 0, cstidx);
-		int result = MDDBaseOperators.AND.combine(f, defined_cst);
+		int result = MDDBaseOperators.AND.combine(ddmanager, defined_cst);
 
-		System.out.println("usage: "+f.getNodeCount());
+		System.out.println("usage: "+ddmanager.getNodeCount());
 		
 		for (int i: defined_cst) {
-			f.free(i);
+			ddmanager.free(i);
 		}
-		System.out.println("usage: "+f.getNodeCount());
+		System.out.println("usage: "+ddmanager.getNodeCount());
 		
-		PathSearcher searcher = new PathSearcher(f, 1);
+		PathSearcher searcher = new PathSearcher(ddmanager, 1);
 		searcher.setNode(result);
 		return searcher.countPaths();
 	}
 	
 	
 	
-	private static int get_nand(MDDManager f, int[][] basics, int p1, int p2) {
-		int result = MDDBaseOperators.OR.combine(f, basics[p1][0], basics[p2][0]);
+	private static int get_nand(MDDManager ddmanager, int[][] basics, int p1, int p2) {
+		int result = MDDBaseOperators.OR.combine(ddmanager, basics[p1][0], basics[p2][0]);
 		return result;
 	}
 	
@@ -137,8 +137,8 @@ public class NQueens {
 		for (int i=0 ; i<N ; i++) {
 			vbuilder.add(""+i, N);
 		}
-		MDDManager f = MDDManagerFactory.getManager( vbuilder, 2);
-		MDDVariable[] variables = f.getAllVariables();
+		MDDManager ddmanager = MDDManagerFactory.getManager( vbuilder, 2);
+		MDDVariable[] variables = ddmanager.getAllVariables();
 		int[][] basics = new int[nbvar*nbvar][2];
 		for (int i=0 ; i<nbvar ; i++) {
 			for (int j=0 ; j<nbvar ; j++) {
@@ -166,17 +166,17 @@ public class NQueens {
 				int pos = i*N+j;
 				for (int k=Math.min(i,j)+1 ; k<N ; k++) {
 					if (k>i) {
-						all_cst[cstidx++] = get_nand(f, basics, pos, k*N+j);
+						all_cst[cstidx++] = get_nand(ddmanager, basics, pos, k*N+j);
 					}
 					if (k>j) {
 						int dj = k-j;
 						int r = i+dj;
 						if (r<N) {
-							all_cst[cstidx++] = get_nand(f, basics, pos, r*N+k);
+							all_cst[cstidx++] = get_nand(ddmanager, basics, pos, r*N+k);
 						}
 						r = i-dj;
 						if (r>=0) {
-							all_cst[cstidx++] = get_nand(f, basics, pos, r*N+k);
+							all_cst[cstidx++] = get_nand(ddmanager, basics, pos, r*N+k);
 						}
 					}
 				}
@@ -184,10 +184,10 @@ public class NQueens {
 		}
 		int[] defined_cst = new int[cstidx];
 		System.arraycopy(all_cst, 0, defined_cst, 0, cstidx);
-		int result = MDDBaseOperators.AND.combine(f, defined_cst);
-		System.out.println("usage: "+f.getNodeCount());
+		int result = MDDBaseOperators.AND.combine(ddmanager, defined_cst);
+		System.out.println("usage: "+ddmanager.getNodeCount());
 		
-		PathSearcher searcher = new PathSearcher(f, 1);
+		PathSearcher searcher = new PathSearcher(ddmanager, 1);
 		searcher.setNode(result);
 		return searcher.countPaths();
 	}

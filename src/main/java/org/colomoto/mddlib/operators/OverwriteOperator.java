@@ -35,14 +35,14 @@ public class OverwriteOperator extends AbstractFlexibleOperator {
 	}
 
 	@Override
-	public int custom(MDDManager factory, NodeRelation type, int first, int other) {
+	public int custom(MDDManager ddmanager, NodeRelation type, int first, int other) {
 		switch (type) {
 			case LL:
 			case NL:
 				if (other > 0) {
-					return factory.use(other);
+					return ddmanager.use(other);
 				}
-				return factory.use(first);
+				return ddmanager.use(first);
 		}
 		System.out.println("DEBUG: AND ask should not come here!");
 		return first;

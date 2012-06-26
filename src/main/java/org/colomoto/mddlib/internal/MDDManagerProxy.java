@@ -17,7 +17,7 @@ import org.colomoto.mddlib.NodeRelation;
 public class MDDManagerProxy implements MDDManager {
 	
 	private final MDDStore store;
-	private final int[] factory2custom, custom2factory;
+	private final int[] store2custom, custom2store;
 	private final MDDVariable[] variables;
 	
 	
@@ -26,9 +26,9 @@ public class MDDManagerProxy implements MDDManager {
 		
 		// build order mapping
 		boolean sameOrder = true;
-		int[] custom2factory = new int[rawVariables.length];
-		for (int i=0 ; i<custom2factory.length ; i++) {
-			custom2factory[i] = -1;
+		int[] custom2store = new int[rawVariables.length];
+		for (int i=0 ; i<custom2store.length ; i++) {
+			custom2store[i] = -1;
 		}
 		int i = 0;
 		for (Object v: customOrder) {
@@ -36,7 +36,7 @@ public class MDDManagerProxy implements MDDManager {
 			if (var.order != i) {
 				sameOrder = false;
 			}
-			custom2factory[var.order] = i;
+			custom2store[var.order] = i;
 			i++;
 		}
 		
@@ -46,29 +46,29 @@ public class MDDManagerProxy implements MDDManager {
 		}
 		
 		// save the order mapping and compute the reverse one
-		int[] factory2custom = new int[rawVariables.length];
-		for (i=0 ; i<factory2custom.length ; i++) {
-			factory2custom[i] = -1;
+		int[] store2custom = new int[rawVariables.length];
+		for (i=0 ; i<store2custom.length ; i++) {
+			store2custom[i] = -1;
 		}
 		i=0;
-		for (int k: custom2factory) {
+		for (int k: custom2store) {
 			if (k >= 0) {
-				factory2custom[k] = i;
+				store2custom[k] = i;
 			}
 			i++;
 		}
-		return new MDDManagerProxy(store, custom2factory, factory2custom);
+		return new MDDManagerProxy(store, custom2store, store2custom);
 	}
 	
-	private MDDManagerProxy(MDDStore store, int[] custom2factory, int[] factory2custom) {
+	private MDDManagerProxy(MDDStore store, int[] custom2store, int[] store2custom) {
 		this.store = store;
-		this.custom2factory = custom2factory;
-		this.factory2custom = factory2custom;
-		this.variables = new MDDVariable[custom2factory.length];
+		this.custom2store = custom2store;
+		this.store2custom = store2custom;
+		this.variables = new MDDVariable[custom2store.length];
 		
 		MDDVariable[] storeVars = store.getAllVariables();
 		int i=0;
-		for (int j: custom2factory) {
+		for (int j: custom2store) {
 			variables[i] = storeVars[j];
 			i++;
 		}
@@ -76,13 +76,13 @@ public class MDDManagerProxy implements MDDManager {
 	
 	@Override
 	public byte reach(int node, byte[] values) {
-		return store.reach(node, values, custom2factory);
+		return store.reach(node, values, custom2store);
 	}
 
 	@Override
 	public MDDVariable getVariableForKey(Object key) {
 		MDDVariable var = store.getVariableForKey(key);
-		int idx = factory2custom[var.order];
+		int idx = store2custom[var.order];
 		if (idx < 0) {
 			// this variable is not is the custom order
 			return null;
@@ -92,7 +92,7 @@ public class MDDManagerProxy implements MDDManager {
 
 	@Override
 	public int getVariableIndex(MDDVariable var) {
-		return factory2custom[var.order];
+		return store2custom[var.order];
 	}
 
 	@Override

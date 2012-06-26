@@ -36,11 +36,11 @@ class MDDAndOperator extends AbstractOperator {
 	}
 
 	@Override
-	public int combine(MDDManager f, int first, int other) {
+	public int combine(MDDManager ddmanager, int first, int other) {
 		if (first == other) {
 			return first;
 		}
-		NodeRelation status = f.getRelation(first, other);
+		NodeRelation status = ddmanager.getRelation(first, other);
 
 		switch (status) {
 		case LN:
@@ -49,31 +49,31 @@ class MDDAndOperator extends AbstractOperator {
 				// no need to "use" it: it is a leaf
 				return first;
 			}
-			return f.use(other);
+			return ddmanager.use(other);
 		case NL:
 			if (other < 1) {
 				// no need to "use" it: it is a leaf
 				return other;
 			}
-			return f.use(first);
+			return ddmanager.use(first);
 		default:
-			return recurse(f, status, first, other);
+			return recurse(ddmanager, status, first, other);
 		}
 	}
 
 	@Override
-	public int recurse_multiple(MDDManager factory, int[] nodes, int leafcount, MDDVariable minVar) {
+	public int recurse_multiple(MDDManager ddmanager, int[] nodes, int leafcount, MDDVariable minVar) {
 		for (int i=0 ; i<leafcount ; i++) {
 			if (nodes[i] <= 0) {
 				return 0;
 			}
 		}
 		nodes = prune_start(nodes, leafcount);
-		return super.recurse_multiple(factory, nodes, 0, minVar);
+		return super.recurse_multiple(ddmanager, nodes, 0, minVar);
 	}
 
 	@Override
-	protected int multiple_leaves(MDDManager f, int[] leaves) {
+	protected int multiple_leaves(MDDManager ddmanager, int[] leaves) {
 		for (int i:leaves) {
 			if (i<1) {
 				return i;
@@ -94,11 +94,11 @@ class MDDOrOperator extends AbstractOperator {
 	}
 	
 	@Override
-	public int combine(MDDManager f, int first, int other) {
+	public int combine(MDDManager ddmanager, int first, int other) {
 		if (first == other) {
 			return first;
 		}
-		NodeRelation status = f.getRelation(first, other);
+		NodeRelation status = ddmanager.getRelation(first, other);
 
 		switch (status) {
 		case LN:
@@ -106,30 +106,30 @@ class MDDOrOperator extends AbstractOperator {
 			if (first > 0) {
 				return first;
 			}
-			return f.use(other);
+			return ddmanager.use(other);
 		case NL:
 			if (other > 0) {
 				return other;
 			}
-			return f.use(first);
+			return ddmanager.use(first);
 		default:
-			return recurse(f, status, first, other);
+			return recurse(ddmanager, status, first, other);
 		}
 	}
 	
 	@Override
-	public int recurse_multiple(MDDManager factory, int[] nodes, int leafcount, MDDVariable minVar) {
+	public int recurse_multiple(MDDManager ddmanager, int[] nodes, int leafcount, MDDVariable minVar) {
 		for (int i=0 ; i<leafcount ; i++) {
 			if (nodes[i] > 0) {
 				return 1;
 			}
 		}
 		nodes = prune_start(nodes, leafcount);
-		return super.recurse_multiple(factory, nodes, 0, minVar);
+		return super.recurse_multiple(ddmanager, nodes, 0, minVar);
 	}
 	
 	@Override
-	protected int multiple_leaves(MDDManager f, int[] leaves) {
+	protected int multiple_leaves(MDDManager ddmanager, int[] leaves) {
 		for (int i:leaves) {
 			if (i>0) {
 				return i;

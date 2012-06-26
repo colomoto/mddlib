@@ -18,6 +18,7 @@ public abstract class AbstractOperator implements FunctionNode {
   public AbstractOperator() {
     super();
   }
+  
   @Override
   public String toString() {
 	  return toString(false);
@@ -29,8 +30,8 @@ public abstract class AbstractOperator implements FunctionNode {
   }
 
   @Override
-  public int getMDD(MDDManager factory) {
-	  return getMDD(factory, false);
+  public int getMDD(MDDManager ddmanager) {
+	  return getMDD(ddmanager, false);
   }
 
   

@@ -4,19 +4,41 @@ import java.util.Stack;
 
 
 /**
- * Operator factory: creates nodes corresponding to a given operator.
+ * Create FunctionNode for a given operator.
  * <p>
- * Each operator should provide a single-instance factory and provide it to the parser.
+ * Each operator implementation should provide a single-instance factory to the parser.
  * <p>
- * A default collection of factories will be made available.
+ * <code>OperatorFactory</code> implementations are provided for the most common operators in
+ * the <code>org.colomoto.mddlib.logicalfunction.operators</code> package.
  * 
  * @author Aurelien Naldi
  */
 public interface OperatorFactory {
 
-	public String getSymbol();
+	/**
+	 * Get the symbol for this operator.
+	 * The symbol is used in the text representation of logical function.
+	 * It can be used to print the operator or to parse a logical function.
+	 * 
+	 * @return the String used for this operator.
+	 */
+	String getSymbol();
+
+	/**
+	 * Get the priority level of a given operator.
+	 * The priority is used to decide which operator should be applied first,
+	 * especially when parenthesis are missing.
+	 * 
+	 * @return the priority level of the corresponding operator
+	 */
+	int getPriority();
 	
-	public int getPriority();
-	
-	public FunctionNode getNode(Stack<FunctionNode> stack);
+	/**
+	 * Build a node representing this operator applied to the current parsing stack.
+	 * The FunctionNode used as children for this operator will be extracted from the stack.
+	 * 
+	 * @param stack current parsing stack
+	 * @return a FunctionNode for this operator
+	 */
+	FunctionNode getNode(Stack<FunctionNode> stack);
 }

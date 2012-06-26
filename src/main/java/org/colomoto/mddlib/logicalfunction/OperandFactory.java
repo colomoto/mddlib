@@ -14,13 +14,13 @@ import org.colomoto.mddlib.MDDVariable;
 public interface OperandFactory {
 	
 	/**
-	 * get (or refresh) the MDDFactory associated to this parser.
+	 * get (or refresh) the MDDManager associated to this parser.
 	 * If it was already created calling this method may refresh it:
 	 * add newly added variables, apply name changes...
 	 * 
-	 * @return a MDD factory with the same variables as this parser.
+	 * @return a MDD manager with the same variables as this parser.
 	 */
-	public MDDManager getMDDFactory();
+	MDDManager getMDDManager();
 	
 	/**
 	 * Check that a list of names matches valid operands for this parser.
@@ -29,7 +29,7 @@ public interface OperandFactory {
 	 * 
 	 * @return true if all these operands are valid
 	 */
-	abstract boolean verifOperandList(List<String> list);
+	boolean verifOperandList(List<String> list);
 
 	/**
 	 * Create an operand object for a given name.
@@ -38,5 +38,5 @@ public interface OperandFactory {
 	 * 
 	 * @return an operand (BooleanNode) corresponding to the provided string 
 	 */
-	abstract FunctionNode createOperand(String name);
+	FunctionNode createOperand(String name);
 }

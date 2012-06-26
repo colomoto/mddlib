@@ -38,7 +38,7 @@ public class TestLogicalFunctionParser extends TestCase {
 
 	public static void debug(FunctionParser parser, OperandFactory opFactory, String function, int nodeCount, int solutionCount) {
 		FunctionNode f = parser.compile(opFactory, function);
-		MDDManager ddFactory = opFactory.getMDDFactory();
+		MDDManager ddFactory = opFactory.getMDDManager();
 		int node = f.getMDD(ddFactory);
 
 //		System.out.println("------------------\n"+function);

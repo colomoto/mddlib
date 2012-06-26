@@ -13,7 +13,7 @@ import java.util.Stack;
  * It delegates the creation of operands to an <code>OperandFactory</code> 
  * 
  * @author Fabrice Lopez: initial implementation in GINsim
- * @author Aurelien Naldi: adaptation to the MDDFactory and OperandFactory
+ * @author Aurelien Naldi: adaptation to the MDDManager and OperandFactory
  */
 public class FunctionParser {
 	

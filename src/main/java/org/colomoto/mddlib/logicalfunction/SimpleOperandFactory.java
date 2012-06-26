@@ -21,7 +21,7 @@ public class SimpleOperandFactory<T> implements OperandFactory {
 	private final Map<String, SimpleOperand<T>> operandMap = new HashMap<String, SimpleOperand<T>>();
 	private final List<T> operands;
 	
-	private MDDManager factory = null;
+	private MDDManager ddmanager = null;
 	
 	/**
 	 * Create a parser with a predefined list of operands.
@@ -49,12 +49,12 @@ public class SimpleOperandFactory<T> implements OperandFactory {
 	}
 
 	@Override
-	public MDDManager getMDDFactory() {
-		if (factory == null) {
+	public MDDManager getMDDManager() {
+		if (ddmanager == null) {
 			
-			factory = MDDManagerFactory.getManager(operands, 2);
+			ddmanager = MDDManagerFactory.getManager(operands, 2);
 		}
-		return factory;
+		return ddmanager;
 	}
 }
 

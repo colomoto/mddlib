@@ -12,6 +12,7 @@
  * Variable reordering and similar optimisations are not implemented nor planned!
  * If you need them, consider using JavaBDD or another pure-BDD library. If you
  * know a similarly optimised pure-java MDD library, please let me know.
- * Simple support for custom variable orders outside of the MDDFactory is provided through CustomOrderMapper.
+ * 
+ * Simple support for custom variable orders is provided by Proxy implementations of MDDManager
  */
 package org.colomoto.mddlib;

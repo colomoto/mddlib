@@ -25,7 +25,7 @@ public class PathSearcher implements Iterable<Integer> {
 
 	private final int minvalue, maxvalue;
 
-	PathBacktrack backtrack;
+	private final PathBacktrack backtrack;
 	private int[] path;
 	private int leaf;
 
@@ -33,45 +33,46 @@ public class PathSearcher implements Iterable<Integer> {
 	 * Create a new path searcher accepting any value (negative leaves are not
 	 * allowed)
 	 * 
-	 * @param factory The factory in which this search works.
+	 * @param ddmanager The MDD manager in which this search works.
 	 */
-	public PathSearcher(MDDManager factory) {
-		this(factory, 0, Integer.MAX_VALUE);
+	public PathSearcher(MDDManager ddmanager) {
+		this(ddmanager, 0, Integer.MAX_VALUE);
 	}
 
 	/**
 	 * Create a new path searcher, with a single value.
 	 * 
-	 * @param factory
-	 *            The factory in which this search works.
+	 * @param ddmanager
+	 *            The MDD manager in which this search works.
 	 * @param value
 	 *            The value of the reached leaf
 	 */
-	public PathSearcher(MDDManager factory, int value) {
-		this(factory, value, value);
+	public PathSearcher(MDDManager ddmanager, int value) {
+		this(ddmanager, value, value);
 	}
 
 	/**
 	 * Create a new path searcher, with a value range.
 	 * 
-	 * @param factory
-	 *            The factory in which this search works.
+	 * @param ddmanager
+	 *            The MDD manager in which this search works.
 	 * @param minvalue
 	 *            minimal value of the reached leaves
 	 * @param maxvalue
 	 *            maximal value of the reached leaves
 	 */
-	public PathSearcher(MDDManager factory, int minvalue, int maxvalue) {
+	public PathSearcher(MDDManager ddmanager, int minvalue, int maxvalue) {
 		this.minvalue = minvalue;
 		this.maxvalue = maxvalue;
 		
-		backtrack = new PathBacktrack(factory);
-		path = new int[factory.getAllVariables().length];
+		backtrack = new PathBacktrack(ddmanager);
+		path = new int[ddmanager.getAllVariables().length];
 	}
 
 	/**
-	 * Start looking up path for a new node, keeping the previous factory.
+	 * Start looking up path for a new node.
 	 * <p>
+	 * Note that the node must come from the same MDD manager.
 	 * For performance reasons, the same array will be reused when searching for
 	 * the next path, copy its content if you need to keep it.
 	 * 
@@ -82,10 +83,6 @@ public class PathSearcher implements Iterable<Integer> {
 	 *         more leaf are found
 	 */
 	public int[] setNode(int node) {
-		if (this.backtrack == null) {
-			throw new RuntimeException("Calling setNode() without a factory");
-		}
-
 		// reset data structure
 		backtrack.reset(node);
 		leaf = 0;
@@ -171,14 +168,14 @@ class PathFoundIterator implements Iterator<Integer> {
 
 class PathBacktrack {
 
-	final MDDManager factory;
+	final MDDManager ddmanager;
 	final int[] indices, values;
 
 	public int pos;
 
-	public PathBacktrack(MDDManager factory) {
-		this.factory = factory;
-		this.indices = new int[factory.getAllVariables().length];
+	public PathBacktrack(MDDManager ddmanager) {
+		this.ddmanager = ddmanager;
+		this.indices = new int[ddmanager.getAllVariables().length];
 		this.values = new int[indices.length];
 	}
 
@@ -197,8 +194,8 @@ class PathBacktrack {
 			path[i] = -1;
 		}
 		for (int idx = 0; idx <= pos; idx++) {
-			MDDVariable var = factory.getNodeVariable(indices[idx]);
-			int i = factory.getVariableIndex(var);
+			MDDVariable var = ddmanager.getNodeVariable(indices[idx]);
+			int i = ddmanager.getVariableIndex(var);
 			path[i] = values[idx];
 		}
 	}
@@ -212,17 +209,17 @@ class PathBacktrack {
 		}
 
 		int node = indices[pos];
-		if (factory.isleaf(node)) {
+		if (ddmanager.isleaf(node)) {
 			throw new RuntimeException("findNext went too far");
 		}
 
 		int curValue = values[pos] + 1;
 
-		MDDVariable var = factory.getNodeVariable(node);
+		MDDVariable var = ddmanager.getNodeVariable(node);
 		if (curValue < var.nbval) {
 			values[pos]++;
-			int next = factory.getChild(node, curValue);
-			if (factory.isleaf(next)) {
+			int next = ddmanager.getChild(node, curValue);
+			if (ddmanager.isleaf(next)) {
 				return next;
 			}
 			pos++;

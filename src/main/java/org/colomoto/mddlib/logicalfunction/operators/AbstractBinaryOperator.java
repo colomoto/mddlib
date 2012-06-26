@@ -67,13 +67,13 @@ public abstract class AbstractBinaryOperator extends AbstractOperator {
 	}
 	
 	@Override
-	public int getMDD(MDDManager factory, boolean reversed) {
+	public int getMDD(MDDManager ddmanager, boolean reversed) {
 		// TODO: use group merging if the children are binary operators of the same type
-		int l = leftArg.getMDD(factory, reversed);
-		int r = rightArg.getMDD(factory, reversed);
-		int ret = getMDDOperation(reversed).combine(factory, l, r);
-		factory.free(l);
-		factory.free(r);
+		int l = leftArg.getMDD(ddmanager, reversed);
+		int r = rightArg.getMDD(ddmanager, reversed);
+		int ret = getMDDOperation(reversed).combine(ddmanager, l, r);
+		ddmanager.free(l);
+		ddmanager.free(r);
 		return ret;
 	}
 

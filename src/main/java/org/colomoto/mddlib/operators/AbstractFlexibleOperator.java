@@ -112,35 +112,35 @@ abstract public class AbstractFlexibleOperator extends AbstractOperator {
 	}
 
 	@Override
-	public int combine(MDDManager f, int first, int other) {
+	public int combine(MDDManager ddmanager, int first, int other) {
 		// NOTE: all operations do not return a node when merging it with itself (stable states, xor, ...)
-		NodeRelation status = f.getRelation(first, other);
+		NodeRelation status = ddmanager.getRelation(first, other);
 
 		MergeAction action = t[status.ordinal()];
 		if (action == MergeAction.ASKME) {
-			action = ask(f, status, first, other);
+			action = ask(ddmanager, status, first, other);
 		}
 		switch (action) {
 			case CUSTOM:
-				return custom(f, status, first, other);
+				return custom(ddmanager, status, first, other);
 				
 			case RECURSIVE:
-				return recurse(f, status, first, other);
+				return recurse(ddmanager, status, first, other);
 				
 			case THIS:
-				return f.use(first);
+				return ddmanager.use(first);
 			case OTHER:
-				return f.use(other);
+				return ddmanager.use(other);
 			case MIN:
 				if (first > other) {
-					return f.use(other);
+					return ddmanager.use(other);
 				}
-				return f.use(first);
+				return ddmanager.use(first);
 			case MAX:
 				if (first > other) {
-					return f.use(first);
+					return ddmanager.use(first);
 				}
-				return f.use(other);
+				return ddmanager.use(other);
 		}
 		return -1;
 	}
@@ -149,14 +149,14 @@ abstract public class AbstractFlexibleOperator extends AbstractOperator {
 	 * if some cases need more info to be tested, put the ASKME value in the array t
 	 * and implement this complementary function.
 	 *
-	 * @param factory
+	 * @param ddmanager
 	 * @param status
 	 * @param first value or level of the first node
 	 * @param other value or level of the other node
 	 * 
 	 * @return the action to perform
 	 */
-	public MergeAction ask(MDDManager factory, NodeRelation status, int first, int other) {
+	public MergeAction ask(MDDManager ddmanager, NodeRelation status, int first, int other) {
 		return null;
 	}
 
@@ -165,14 +165,14 @@ abstract public class AbstractFlexibleOperator extends AbstractOperator {
 	 * Warning: it is responsible for dealing with usage counter: don't forget to
 	 * call the "use" method if you return one of the existing nodes without going through
 	 * get_bnode or get_mnode.
-	 * @param factory
+	 * @param ddmanager
 	 * @param status
 	 * @param first value or level of the first node
 	 * @param other value or level of the other node
 	 * 
 	 * @return the resulting node index
 	 */
-	public int custom(MDDManager factory, NodeRelation status, int first, int other) {
+	public int custom(MDDManager ddmanager, NodeRelation status, int first, int other) {
 		return -1;
 	}
 
