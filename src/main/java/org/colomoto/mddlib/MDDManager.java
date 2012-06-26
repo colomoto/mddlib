@@ -173,7 +173,8 @@ public interface MDDManager {
 	 * 
 	 * @param node
 	 * @param values
-	 * @return
+	 * 
+	 * @return the leaf reached for this assignment
 	 */
 	byte reach(int node, byte[] values);
 

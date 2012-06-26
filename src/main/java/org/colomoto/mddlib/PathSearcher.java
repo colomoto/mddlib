@@ -123,10 +123,9 @@ public class PathSearcher implements Iterable<Integer> {
 	}
 
 	/**
-	 * Count the number of paths found for a given node.
-	 * Note that this will enumerate all paths (using the associated iterator).
+	 * Count the number of paths found for the current node.
+	 * Note that this will enumerate all paths (using the associated iterator)
 	 * 
-	 * @param node
 	 * @return the number of paths found
 	 */
 	public int countPaths() {

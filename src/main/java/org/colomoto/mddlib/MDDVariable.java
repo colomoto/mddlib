@@ -90,7 +90,7 @@ public class MDDVariable {
 	
 	/**
 	 * Get a Boolean node and release the provided children.
-	 * @see <code>getNode(int, int)</code>.
+	 * @see MDDVariable#getNode(int, int)
 	 * 
 	 * @param f
 	 * @param t
@@ -106,7 +106,7 @@ public class MDDVariable {
 
 	/**
 	 * Get a node and release the provided children.
-	 * @see <code>getNode(int[])</code>.
+	 * @see MDDVariable#getNode(int[])
 	 * 
 	 * @param children
 	 * 
@@ -121,10 +121,9 @@ public class MDDVariable {
 	}
 
 	/**
-	 * get a node for the specified variable with two different children:
+	 * Get a node for the specified variable with two different children:
 	 * a "true" child in the specified range and a "false" one outside.
 	 * 
-	 * @param var the variable
 	 * @param vfalse the "false" child
 	 * @param vtrue the "true" child
 	 * @param start the start of the "true" range
@@ -177,7 +176,8 @@ public class MDDVariable {
 	 * Test if this variable comes after another variable.
 	 * 
 	 * @param other
-	 * @return
+	 * 
+	 * @return true if this variable has a lower priority than the other
 	 */
 	public boolean after(MDDVariable other) {
 		if (other == null) {
@@ -186,7 +186,15 @@ public class MDDVariable {
 
 		return other.order < this.order;
 	}
-	
+
+	/**
+	 * Get the variable with the best priority.
+	 * 
+	 * @param v1
+	 * @param v2
+	 * 
+	 * @return the variable with the best priority
+	 */
 	public static MDDVariable selectFirstVariable(MDDVariable v1, MDDVariable v2) {
 		if (v1 == null || v1.after(v2)) {
 			return v2;

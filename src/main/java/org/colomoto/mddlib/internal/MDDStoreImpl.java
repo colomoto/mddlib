@@ -61,16 +61,12 @@ public class MDDStoreImpl implements MDDStore {
 	private int nbnodes = 0;
 	private final int nbleaves;
 
-	public MDDManager getManager(List<?> order) {
-		return MDDManagerProxy.getProxy(this, order);
-	}
-	
 	/**
 	 * Create a new MDDStore using the default capacity.
 	 * Note that this constructor should be called through {@link MDDManagerFactory}, not directly.
 	 * 
-	 * @param variables		the list of variables that can be used.
-	 * @param nbleaves		the number of values that can be reached.
+	 * @param keys		the list of variables that can be used.
+	 * @param nbleaves	the number of values that can be reached.
 	 */
 	public MDDStoreImpl(Collection<?> keys, int nbleaves) {
 		this(DEFAULT_CAPACITY, keys, nbleaves);
@@ -110,7 +106,12 @@ public class MDDStoreImpl implements MDDStore {
 		}
 	}
 
-	
+	@Override
+	public MDDManager getManager(List<?> order) {
+		return MDDManagerProxy.getProxy(this, order);
+	}
+
+
 	/* ********************* VARIABLES ****************************** */
 	
 	private MDDVariable[] getBooleanVariables(Collection<?> keys) {
