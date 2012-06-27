@@ -202,4 +202,8 @@ public class MDDVariable {
 		
 		return v1;
 	}
+	
+	public String toString() {
+		return key.toString();
+	}
 }

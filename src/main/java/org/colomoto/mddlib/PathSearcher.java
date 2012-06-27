@@ -90,6 +90,18 @@ public class PathSearcher implements Iterable<Integer> {
 	}
 	
 	/**
+	 * Get the int[] used to store the found path.
+	 * This returns the same array as setNode(int) and is only provided as convenience
+	 * when you obtained a pre-configured searcher.
+	 * 
+	 * @return a reusable array denoting a path to a valid leaf or null if no
+	 *         more leaf are found
+	 */
+	public int[] getPath() {
+		return path;
+	}
+	
+	/**
 	 * fill the path (returned by <code>setNode(int)</code>) with the last leaf found.
 	 * 
  	 * @see #getNextLeaf()
