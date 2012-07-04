@@ -157,4 +157,14 @@ public class MDDManagerProxy implements MDDManager {
 	public int getSign(int node, MDDVariable pivot) {
 		return store.getSign(node, pivot);
 	}
+
+	@Override
+	public boolean[] collectDecisionVariables(int node) {
+		boolean[] inStore = store.collectDecisionVariables(node);
+		boolean[] ret = new boolean[variables.length];
+		for (int i=0 ; i<ret.length ; i++) {
+			ret[i] = inStore[ custom2store[i] ];
+		}
+		return ret;
+	}
 }

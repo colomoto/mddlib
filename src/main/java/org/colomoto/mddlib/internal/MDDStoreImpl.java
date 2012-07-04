@@ -804,6 +804,32 @@ public class MDDStoreImpl implements MDDStore {
 		return curSign;
 	}
 	
+	@Override
+	public boolean[] collectDecisionVariables(int node) {
+		boolean[] vars = new boolean[variables.length];
+		
+		collectDecisionVariables(vars, node);
+		
+		return vars;
+	}
+	
+	/**
+	 * Recursive backend for collectDecisionVariables(int).
+	 * 
+	 * @param flags
+	 * @param node
+	 */
+	private void collectDecisionVariables(boolean[] flags, int node) {
+		MDDVariable var = getNodeVariable(node);
+		if (var == null) {
+			return;
+		}
+		
+		flags[getLevel(node)] = true;
+		for (int i=0 ; i<var.nbval ; i++) {
+			collectDecisionVariables(flags, getChild(node, i));
+		}
+	}
 	
 	/* ***************** DEBUG ********************** */
 	/**

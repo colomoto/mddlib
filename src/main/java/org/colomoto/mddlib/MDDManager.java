@@ -178,4 +178,11 @@ public interface MDDManager {
 	 */
 	byte reach(int node, byte[] values);
 
+	/**
+	 * Collect variables on which a MDD depends.
+	 * 
+	 * @param node
+	 * @return a boolean array indicating for each variable if it affects the given MDD.
+	 */
+	boolean[] collectDecisionVariables(int node);
 }
