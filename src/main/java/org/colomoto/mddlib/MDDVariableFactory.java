@@ -1,10 +1,8 @@
 package org.colomoto.mddlib;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * List of variables with an associated maximal value.

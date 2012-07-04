@@ -1,14 +1,11 @@
 package org.colomoto.mddlib.logicalfunction;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
-import org.colomoto.mddlib.MDDVariable;
-import org.colomoto.mddlib.internal.MDDStoreImpl;
 
 
 /**

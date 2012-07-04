@@ -1,7 +1,6 @@
 package org.colomoto.mddlib.internal;
 
 import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
 
 /**
  * Interface for the raw MDD store.

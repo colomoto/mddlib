@@ -3,7 +3,6 @@ package org.colomoto.mddlib.logicalfunction;
 import java.util.List;
 
 import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
 
 
 /**
