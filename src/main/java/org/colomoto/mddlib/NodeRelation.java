@@ -5,6 +5,8 @@ package org.colomoto.mddlib;
  * <p>
  * This is used during MDD combinations, to determine the "top" node
  * and help the operator to pick the right code path.
+ * 
+ * @author Aurelien Naldi
  */
 public enum NodeRelation {
 

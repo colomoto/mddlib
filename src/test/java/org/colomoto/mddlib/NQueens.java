@@ -9,7 +9,12 @@ import org.colomoto.mddlib.PathSearcher;
 import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 
-
+/**
+ * Simple solver for the n-queens problem, using BDDs or MDDs
+ * It is inspired by the n-queens example in JavaBDD.
+ * 
+ * @author Aurelien Naldi
+ */
 public class NQueens {
 
     public static void main(String[] args) {

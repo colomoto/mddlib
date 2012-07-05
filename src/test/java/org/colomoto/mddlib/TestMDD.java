@@ -10,6 +10,11 @@ import org.colomoto.mddlib.internal.MDDStoreImpl;
 
 import junit.framework.TestCase;
 
+/**
+ * Rough test case for MDD creation, duplicate detection and usage counter.
+ * 
+ * @author Aurelien Naldi
+ */
 public class TestMDD extends TestCase {
 
 	public void testConstruction() {

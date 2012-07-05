@@ -10,7 +10,7 @@ import java.util.Map;
  * It is a simple list of variables, with a map to remember some maximal level and convenience method to add them.
  * Variables added using the standard <code>List.add()</code> method, will be considered as Boolean.
  * 
- * @author aurelien
+ * @author Aurelien Naldi
  */
 public class MDDVariableFactory extends ArrayList<Object> {
 
