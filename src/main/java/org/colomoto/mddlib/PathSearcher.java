@@ -29,6 +29,8 @@ public class PathSearcher implements Iterable<Integer> {
 	private int[] path;
 	private int leaf;
 
+	private boolean isLeaf = false;
+	
 	/**
 	 * Create a new path searcher accepting any value (negative leaves are not
 	 * allowed)
@@ -83,7 +85,20 @@ public class PathSearcher implements Iterable<Integer> {
 	 *         more leaf are found
 	 */
 	public int[] setNode(int node) {
-		// reset data structure
+		if (backtrack.ddmanager.isleaf(node)) {
+			// properly deal with leaves!
+			leaf = node;
+			isLeaf = true;
+			
+			for (int i=0 ; i<path.length ; i++) {
+				path[i] = -1;
+			}
+
+			return path;
+		}
+		
+		// reset data structure for normal nodes
+		isLeaf = false;
 		backtrack.reset(node);
 		leaf = 0;
 		return path;
@@ -131,6 +146,10 @@ public class PathSearcher implements Iterable<Integer> {
 
 	@Override
 	public Iterator<Integer> iterator() {
+		if (isLeaf) {
+			return new SingleLeafIterator(leaf);
+		}
+		
 		return new PathFoundIterator(this);
 	}
 
@@ -169,6 +188,30 @@ class PathFoundIterator implements Iterator<Integer> {
 		int ret = leaf;
 		searcher.fillPath();
 		leaf = searcher.getNextLeaf();
+		return ret;
+	}
+
+	@Override
+	public void remove() {
+	}
+}
+
+class SingleLeafIterator implements Iterator<Integer> {
+	private int leaf;
+
+	public SingleLeafIterator(int node) {
+		this.leaf = node;
+	}
+
+	@Override
+	public boolean hasNext() {
+		return leaf >= 0;
+	}
+
+	@Override
+	public Integer next() {
+		int ret = leaf;
+		leaf = -1;
 		return ret;
 	}
 

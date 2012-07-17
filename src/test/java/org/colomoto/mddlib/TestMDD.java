@@ -137,6 +137,20 @@ public class TestMDD extends TestCase {
 		
 		checkPath(ps, n1, 		new int[][] { {-1,  0, -1, -1, -1},  {-1,  1,  0, -1,  1} });
 		checkPath(ps2, n1, 		new int[][] { {-1,  0, -1, -1, -1},  {-1,  1,  1, -1,  0} });
+
+		
+		// stress path searcher
+		ps.setNode(1);
+		boolean first = true;
+		for (int l: ps) {
+			if (!first) {
+				fail();
+			}
+			
+			for (int v: ps.getPath()) {
+				assertEquals(-1, v);
+			}
+		}
 	}
 
 	private void checkPath(PathSearcher ps, int node, int[][] expected) {
