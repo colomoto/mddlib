@@ -144,12 +144,13 @@ public class TestMDD extends TestCase {
 		boolean first = true;
 		for (int l: ps) {
 			if (!first) {
-				fail();
+				fail("Should get only one path");
 			}
 			
 			for (int v: ps.getPath()) {
 				assertEquals(-1, v);
 			}
+			first = false;
 		}
 	}
 

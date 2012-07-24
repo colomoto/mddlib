@@ -24,12 +24,10 @@ import java.util.Iterator;
 public class PathSearcher implements Iterable<Integer> {
 
 	private final int minvalue, maxvalue;
-
-	private final PathBacktrack backtrack;
-	private int[] path;
-	private int leaf;
-
-	private boolean isLeaf = false;
+	private final MDDManager ddmanager;
+	private final int[] path;
+	
+	private int node;
 	
 	/**
 	 * Create a new path searcher accepting any value (negative leaves are not
@@ -66,8 +64,8 @@ public class PathSearcher implements Iterable<Integer> {
 	public PathSearcher(MDDManager ddmanager, int minvalue, int maxvalue) {
 		this.minvalue = minvalue;
 		this.maxvalue = maxvalue;
+		this.ddmanager = ddmanager;
 		
-		backtrack = new PathBacktrack(ddmanager);
 		path = new int[ddmanager.getAllVariables().length];
 	}
 
@@ -85,25 +83,10 @@ public class PathSearcher implements Iterable<Integer> {
 	 *         more leaf are found
 	 */
 	public int[] setNode(int node) {
-		if (backtrack.ddmanager.isleaf(node)) {
-			// properly deal with leaves!
-			leaf = node;
-			isLeaf = true;
-			
-			for (int i=0 ; i<path.length ; i++) {
-				path[i] = -1;
-			}
-
-			return path;
-		}
-		
-		// reset data structure for normal nodes
-		isLeaf = false;
-		backtrack.reset(node);
-		leaf = 0;
-		return path;
+		this.node = node;
+		return getPath();
 	}
-	
+
 	/**
 	 * Get the int[] used to store the found path.
 	 * This returns the same array as setNode(int) and is only provided as convenience
@@ -116,42 +99,22 @@ public class PathSearcher implements Iterable<Integer> {
 		return path;
 	}
 	
-	/**
-	 * fill the path (returned by <code>setNode(int)</code>) with the last leaf found.
-	 * 
- 	 * @see #getNextLeaf()
-	 */
-	public void fillPath() {
-		backtrack.fillPath(path);
-	}
-
-	/**
-	 * Lookup the next leaf in this MDD.
-	 * <p>
-	 * This will lookup the next leaf and return its value but it will _NOT_ update
-	 * the path. for this you have to call <code>fillPath()</code> explicitly.
-	 * 
-	 * @return the value of the next leaf, or -1 after the last one.
-	 * @see #fillPath()
-	 */
-	public int getNextLeaf() {
-		while (leaf >= 0) {
-			leaf = backtrack.findNextLeaf();
-			if (leaf >= minvalue && leaf <= maxvalue) {
-				return leaf;
-			}
-		}
-		return -1;
-	}
-
 	@Override
 	public Iterator<Integer> iterator() {
-		if (isLeaf) {
-			return new SingleLeafIterator(leaf);
+		if (ddmanager.isleaf(node)) {
+			if (node >= minvalue && node <= maxvalue) {
+				for (int i=0 ; i<path.length ; i++) {
+					path[i] = -1;
+				}
+				return new SingleLeafIterator(node);
+			}
+			
+			return EmptyIterator.EMPTYITERATOR;
 		}
 		
-		return new PathFoundIterator(this);
+		return new PathFoundIterator(ddmanager, node, path, minvalue, maxvalue);
 	}
+
 
 	/**
 	 * Count the number of paths found for the current node.
@@ -164,31 +127,26 @@ public class PathSearcher implements Iterable<Integer> {
 		for (Integer i: this) {
 			ret++;
 		}
-		
 		return ret;
 	}
 }
 
-class PathFoundIterator implements Iterator<Integer> {
-	private int leaf;
-	private final PathSearcher searcher;
+class EmptyIterator implements Iterator<Integer> {
 
-	public PathFoundIterator(PathSearcher searcher) {
-		this.searcher = searcher;
-		leaf = searcher.getNextLeaf();
+	public static final EmptyIterator EMPTYITERATOR = new EmptyIterator();
+
+	private EmptyIterator() {
+		// private constructor: single instance class
 	}
-
+	
 	@Override
 	public boolean hasNext() {
-		return leaf >= 0;
+		return false;
 	}
 
 	@Override
 	public Integer next() {
-		int ret = leaf;
-		searcher.fillPath();
-		leaf = searcher.getNextLeaf();
-		return ret;
+		return null;
 	}
 
 	@Override
@@ -218,6 +176,62 @@ class SingleLeafIterator implements Iterator<Integer> {
 	@Override
 	public void remove() {
 	}
+}
+
+
+class PathFoundIterator implements Iterator<Integer> {
+	private final PathBacktrack backtrack;
+	private final int[] path;
+	private final int minvalue, maxvalue;
+	
+	private int leaf;
+
+	public PathFoundIterator(MDDManager ddmanager, int node, int[] path, int min, int max) {
+		this.path = path;
+		this.minvalue = min;
+		this.maxvalue = max;
+		this.backtrack = new PathBacktrack(ddmanager);
+		backtrack.reset(node);
+		
+		leaf = getNextLeaf();
+	}
+
+	@Override
+	public boolean hasNext() {
+		return leaf >= 0;
+	}
+
+	@Override
+	public Integer next() {
+		int ret = leaf;
+		backtrack.fillPath(path);
+		leaf = getNextLeaf();
+		return ret;
+	}
+
+	@Override
+	public void remove() {
+	}
+	
+	/**
+	 * Lookup the next leaf in this MDD.
+	 * <p>
+	 * This will lookup the next leaf and return its value but it will _NOT_ update
+	 * the path. for this you have to call <code>fillPath()</code> explicitly.
+	 * 
+	 * @return the value of the next leaf, or -1 after the last one.
+	 * @see #fillPath()
+	 */
+	public int getNextLeaf() {
+		while (leaf >= 0) {
+			leaf = backtrack.findNextLeaf();
+			if (leaf >= minvalue && leaf <= maxvalue) {
+				return leaf;
+			}
+		}
+		return -1;
+	}
+
 }
 
 class PathBacktrack {
