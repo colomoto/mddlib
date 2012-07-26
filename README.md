@@ -19,9 +19,7 @@ This code is available under LGPL v2+.
 Authors
 -------
 
-Aurelien Naldi
-
-Fabrice Lopez
-
-Add your name here ;)
+Aurelien Naldi  
+Fabrice Lopez  
+Add your name here ;)  
 
