@@ -5,6 +5,7 @@ import java.util.List;
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.NodeRelation;
+import org.colomoto.mddlib.VariableEffect;
 
 /**
  * MDDManager adding a custom order on top of an existing MDDStore.
@@ -166,5 +167,10 @@ public class MDDManagerProxy implements MDDManager {
 			ret[i] = inStore[ custom2store[i] ];
 		}
 		return ret;
+	}
+
+	@Override
+	public VariableEffect getVariableEffect(MDDVariable var, int node) {
+		return store.getVariableEffect(var, node);
 	}
 }

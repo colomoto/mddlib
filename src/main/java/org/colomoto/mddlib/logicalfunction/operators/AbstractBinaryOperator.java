@@ -24,7 +24,6 @@ public abstract class AbstractBinaryOperator extends AbstractOperator {
 		}
 	}
 	public AbstractBinaryOperator(Stack<FunctionNode> stack) {
-		System.out.println(stack);
 		rightArg = stack.pop();
 		leftArg = stack.pop();
 		if (leftArg == null || rightArg == null) {

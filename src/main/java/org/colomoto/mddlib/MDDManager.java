@@ -185,4 +185,14 @@ public interface MDDManager {
 	 * @return a boolean array indicating for each variable if it affects the given MDD.
 	 */
 	boolean[] collectDecisionVariables(int node);
+	
+	/**
+	 * Determine the effect of a given variable on a MDD.
+	 * To find variables of interest, use collectDecisionVariables(node).
+	 * 
+	 * @param var
+	 * @param node
+	 * @return the effect of this variable.
+	 */
+	VariableEffect getVariableEffect(MDDVariable var, int node);
 }

@@ -8,6 +8,7 @@ import org.colomoto.mddlib.MDDManagerFactory;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.NodeRelation;
+import org.colomoto.mddlib.VariableEffect;
 
 /**
  * MDD factory implementation: create, store, retrieve a collection of MDDs.
@@ -830,7 +831,123 @@ public class MDDStoreImpl implements MDDStore {
 			collectDecisionVariables(flags, getChild(node, i));
 		}
 	}
-	
+
+	public VariableEffect getVariableEffect(MDDVariable var, int node) {
+		
+		// no effect if we can not encounter the wanted variable
+		MDDVariable curVar = getNodeVariable(node);
+		if (curVar == null || curVar.after(var)) {
+			return VariableEffect.NONE;
+		}
+
+		// if we found the variable, we will find an effect downstream
+		if (curVar.equals(var)) {
+			VariableEffect effect = VariableEffect.NONE;
+			int curChild = getChild(node, 0);
+			for (int value=1 ; value < var.nbval ; value++) {
+				int nextChild = getChild(node, value);
+				if (nextChild != curChild) {
+					effect = effect.combine( lookupEffect(curChild, nextChild) );
+					curChild = nextChild;
+				}
+			}
+			return effect;
+		}
+
+
+		// otherwise, just browse deeper
+		int curChild = getChild(node, 0);
+		VariableEffect effect = getVariableEffect(var, curChild);
+		for (int value=1 ; value < var.nbval ; value++) {
+			int nextChild = getChild(node, value);
+			if (nextChild != curChild) {
+				curChild = nextChild;
+				effect = effect.combine( getVariableEffect(var, nextChild) );
+				if (effect == VariableEffect.DUAL) {
+					return effect;
+				}
+			}
+		}
+		
+		return effect;
+	}
+
+	private VariableEffect lookupEffect(int low, int high) {
+		NodeRelation rel = getRelation(low, high);
+		switch (rel) {
+
+		case LL:
+			if (low < high) {
+				return VariableEffect.POSITIVE;
+			}
+			if (low > high) {
+				return VariableEffect.NEGATIVE;
+			}
+			return VariableEffect.NONE;
+
+
+		case LN:
+		case NNf:
+			MDDVariable var = getNodeVariable(high);
+			int curChild = getChild(high, 0);
+			VariableEffect effect = lookupEffect(low, curChild);
+			for (int value=1 ; value < var.nbval ; value++) {
+				int nextChild = getChild(high, value);
+				if (nextChild != curChild) {
+					curChild = nextChild;
+					effect = effect.combine( lookupEffect(low, nextChild) );
+					if (effect == VariableEffect.DUAL) {
+						return effect;
+					}
+				}
+			}
+			return effect;
+
+
+		case NL:
+		case NNn:
+			var = getNodeVariable(high);
+			curChild = getChild(low, 0);
+			effect = lookupEffect(curChild, high);
+			for (int value=1 ; value < var.nbval ; value++) {
+				int nextChild = getChild(low, value);
+				if (nextChild != curChild) {
+					curChild = nextChild;
+					effect = effect.combine( lookupEffect(nextChild, high) );
+					if (effect == VariableEffect.DUAL) {
+						return effect;
+					}
+				}
+			}
+			return effect;
+
+
+		case NN:
+			var = getNodeVariable(high);
+			curChild = getChild(high, 0);
+			int curChildLow = getChild(low, 0);
+			effect = lookupEffect(curChildLow, curChild);
+			for (int value=1 ; value < var.nbval ; value++) {
+				int nextChild = getChild(high, value);
+				int nextChildLow = getChild(low, value);
+				if (nextChild != curChild || nextChildLow != curChildLow) {
+					curChild = nextChild;
+					curChildLow = nextChildLow;
+					effect = effect.combine( lookupEffect(nextChildLow, nextChild) );
+					if (effect == VariableEffect.DUAL) {
+						return effect;
+					}
+				}
+			}
+			return effect;
+
+
+		default:
+			throw new RuntimeException("Invalid node relation");
+		}
+		
+	}
+
 	/* ***************** DEBUG ********************** */
 	/**
 	 * Debug helper: print a MDD on standard output.

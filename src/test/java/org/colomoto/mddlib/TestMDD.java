@@ -7,6 +7,7 @@ import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.PathSearcher;
 import org.colomoto.mddlib.internal.MDDStoreImpl;
+import org.junit.Test;
 
 import junit.framework.TestCase;
 
@@ -17,12 +18,9 @@ import junit.framework.TestCase;
  */
 public class TestMDD extends TestCase {
 
+	@Test
 	public void testConstruction() {
-		List<String> keys = new ArrayList<String>();
-		for (int i = 0; i < 5; i++) {
-			keys.add("var" + i);
-		}
-		MDDManager ddmanager = MDDManagerFactory.getManager( keys, 10);
+		MDDManager ddmanager = getSimpleManager(5);
 		MDDVariable[] variables = ddmanager.getAllVariables();
 		
 		int c = 0;
@@ -79,19 +77,15 @@ public class TestMDD extends TestCase {
 		}
 	}
 
+	@Test
 	public void testOrderProxy() {
-		List<String> keys = new ArrayList<String>();
-		for (int i = 0; i < 5; i++) {
-			keys.add("var" + i);
-		}
-		
-		MDDManager manager = MDDManagerFactory.getManager( keys, 10);
+		MDDManager manager = getSimpleManager(5);
 		MDDVariable[] variables = manager.getAllVariables();
 		
 		List<String> keys2 = new ArrayList<String>();
 		int[] altOrder = {3,1,4,0,2};
 		for (int i: altOrder) {
-			keys2.add( keys.get(i) );
+			keys2.add( (String)variables[i].key );
 		}
 		
 		MDDManager pManager = manager.getManager(keys2);
@@ -166,5 +160,36 @@ public class TestMDD extends TestCase {
 
 			n++;
 		}
+	}
+	
+	@Test
+	public void testInferSign() {
+		MDDManager ddmanager = getSimpleManager(5);
+		MDDVariable[] variables = ddmanager.getAllVariables();
+		
+		int n1 = variables[4].getNode(0, 1);
+		int n2 = variables[4].getNode(1, 0);
+		int n3 = variables[2].getNode(n1, n2);
+
+		
+		assertEquals(VariableEffect.NONE, ddmanager.getVariableEffect(variables[0], 0));
+		assertEquals(VariableEffect.NONE, ddmanager.getVariableEffect(variables[0], n1));
+		assertEquals(VariableEffect.NONE, ddmanager.getVariableEffect(variables[0], n2));
+		assertEquals(VariableEffect.NONE, ddmanager.getVariableEffect(variables[0], n3));
+		
+		assertEquals(VariableEffect.POSITIVE, ddmanager.getVariableEffect(variables[4], n1));
+		assertEquals(VariableEffect.NEGATIVE, ddmanager.getVariableEffect(variables[4], n2));
+		assertEquals(VariableEffect.DUAL, ddmanager.getVariableEffect(variables[4], n3));
+		assertEquals(VariableEffect.DUAL, ddmanager.getVariableEffect(variables[2], n3));
+		assertEquals(VariableEffect.NONE, ddmanager.getVariableEffect(variables[3], n3));
+		
+	}
+	
+	private MDDManager getSimpleManager(int size) {
+		List<String> keys = new ArrayList<String>();
+		for (int i = 0; i < size; i++) {
+			keys.add("var" + i);
+		}
+		return MDDManagerFactory.getManager( keys, 10);
 	}
 }
