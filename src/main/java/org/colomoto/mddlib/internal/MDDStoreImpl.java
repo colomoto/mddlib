@@ -832,6 +832,7 @@ public class MDDStoreImpl implements MDDStore {
 		}
 	}
 
+	@Override
 	public VariableEffect getVariableEffect(MDDVariable var, int node) {
 		
 		// no effect if we can not encounter the wanted variable
@@ -870,6 +871,56 @@ public class MDDStoreImpl implements MDDStore {
 		}
 		
 		return effect;
+	}
+
+	@Override
+	public VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node) {
+		if (var.nbval == 2) {
+			return new VariableEffect[] { getVariableEffect(var, node) };
+		}
+		
+		// real multivalued lookup
+		VariableEffect[] effects = new VariableEffect[var.nbval-1];
+		for (int i=1 ; i<var.nbval ; i++) {
+			effects[i-1] = VariableEffect.NONE;
+		}
+		inspectVariableEffect(var, node, effects);
+		return effects;
+	}
+	
+	private void inspectVariableEffect(MDDVariable var, int node, VariableEffect[] effects) {
+		// no effect if we can not encounter the wanted variable
+		MDDVariable curVar = getNodeVariable(node);
+		if (curVar == null || curVar.after(var)) {
+			return;
+		}
+
+		// if we found the variable, we will find an effect downstream
+		if (curVar.equals(var)) {
+			int curChild = getChild(node, 0);
+			for (int value=1 ; value < var.nbval ; value++) {
+				int nextChild = getChild(node, value);
+				if (nextChild != curChild) {
+					effects[value-1] = effects[value-1].combine( lookupEffect(curChild, nextChild) );
+					curChild = nextChild;
+				}
+			}
+			return;
+		}
+
+
+		// otherwise, just browse deeper
+		int curChild = getChild(node, 0);
+		inspectVariableEffect(var, curChild, effects);
+		for (int value=1 ; value < var.nbval ; value++) {
+			int nextChild = getChild(node, value);
+			if (nextChild != curChild) {
+				curChild = nextChild;
+				inspectVariableEffect(var, nextChild, effects);
+			}
+		}
+		
+		return;
 	}
 
 	private VariableEffect lookupEffect(int low, int high) {

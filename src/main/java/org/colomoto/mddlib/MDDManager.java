@@ -195,4 +195,14 @@ public interface MDDManager {
 	 * @return the effect of this variable.
 	 */
 	VariableEffect getVariableEffect(MDDVariable var, int node);
+	
+	/**
+	 * Determine the effect of a given variable on a MDD.
+	 * To find variables of interest, use collectDecisionVariables(node).
+	 * 
+	 * @param var
+	 * @param node
+	 * @return the effects of each level switch for this variable
+	 */
+	VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node);
 }

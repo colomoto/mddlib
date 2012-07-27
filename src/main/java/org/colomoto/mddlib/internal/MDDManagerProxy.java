@@ -173,4 +173,9 @@ public class MDDManagerProxy implements MDDManager {
 	public VariableEffect getVariableEffect(MDDVariable var, int node) {
 		return store.getVariableEffect(var, node);
 	}
+	
+	@Override
+	public VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node) {
+		return store.getMultivaluedVariableEffect(var, node);
+	}
 }
