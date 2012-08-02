@@ -77,7 +77,7 @@ public class MDDManagerProxy implements MDDManager {
 	
 	@Override
 	public byte reach(int node, byte[] values) {
-		return store.reach(node, values, custom2store);
+		return store.reach(node, values, store2custom);
 	}
 
 	@Override
