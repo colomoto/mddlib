@@ -26,8 +26,8 @@ public class MDDManagerProxy implements MDDManager {
 		MDDVariable[] rawVariables = store.getAllVariables();
 		
 		// build order mapping
-		boolean sameOrder = true;
-		int[] custom2store = new int[rawVariables.length];
+		boolean sameOrder = rawVariables.length == customOrder.size();
+		int[] custom2store = new int[customOrder.size()];
 		for (int i=0 ; i<custom2store.length ; i++) {
 			custom2store[i] = -1;
 		}
@@ -37,7 +37,7 @@ public class MDDManagerProxy implements MDDManager {
 			if (var.order != i) {
 				sameOrder = false;
 			}
-			custom2store[var.order] = i;
+			custom2store[i] = var.order;
 			i++;
 		}
 		

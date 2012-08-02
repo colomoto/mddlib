@@ -957,7 +957,7 @@ public class MDDStoreImpl implements MDDStore {
 
 		case NL:
 		case NNn:
-			var = getNodeVariable(high);
+			var = getNodeVariable(low);
 			curChild = getChild(low, 0);
 			effect = lookupEffect(curChild, high);
 			for (int value=1 ; value < var.nbval ; value++) {
