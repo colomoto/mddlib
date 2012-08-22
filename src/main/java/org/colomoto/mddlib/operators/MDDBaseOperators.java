@@ -38,7 +38,7 @@ class MDDAndOperator extends AbstractOperator {
 	@Override
 	public int combine(MDDManager ddmanager, int first, int other) {
 		if (first == other) {
-			return first;
+			return ddmanager.use(first);
 		}
 		NodeRelation status = ddmanager.getRelation(first, other);
 
@@ -96,7 +96,7 @@ class MDDOrOperator extends AbstractOperator {
 	@Override
 	public int combine(MDDManager ddmanager, int first, int other) {
 		if (first == other) {
-			return first;
+			return ddmanager.use(first);
 		}
 		NodeRelation status = ddmanager.getRelation(first, other);
 
