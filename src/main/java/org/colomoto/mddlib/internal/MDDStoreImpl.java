@@ -146,7 +146,12 @@ public class MDDStoreImpl implements MDDStore {
 		if (isleaf(n)) {
 			return null;
 		}
-		return variables[getLevel(n)];
+		
+		int l = getLevel(n);
+		if (l < 0) {
+			throw new RuntimeException("Invalid level found for "+n+": free/use bug?");
+		}
+		return variables[l];
 	}
 
 	@Override
@@ -492,28 +497,30 @@ public class MDDStoreImpl implements MDDStore {
 	public NodeRelation getRelation(int first, int other) {
 		if (first == other) {
 			if (isleaf(first)) {
-					return NodeRelation.LL;
+				return NodeRelation.LL;
 			}
 			return NodeRelation.NN;
 		}
+		
 		if (isleaf(first)) {
 			if (isleaf(other)) {
 				return NodeRelation.LL;
-			} else {
-				return NodeRelation.LN;
 			}
-		} else if (isleaf(other)) {
+			return NodeRelation.LN;
+		}
+		
+		if (isleaf(other)) {
 			return NodeRelation.NL;
+		}
+		
+		int l1 = blocs[first];
+		int l2 = blocs[other];
+		if (l1 == l2) {
+			return NodeRelation.NN;
+		} else if (l1 < l2) {
+			return NodeRelation.NNn;
 		} else {
-			int l1 = blocs[first];
-			int l2 = blocs[other];
-			if (l1 == l2) {
-				return NodeRelation.NN;
-			} else if (l1 < l2) {
-				return NodeRelation.NNn;
-			} else {
-				return NodeRelation.NNf;
-			}
+			return NodeRelation.NNf;
 		}
 	}
 	
