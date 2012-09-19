@@ -26,6 +26,7 @@ public class PathSearcher implements Iterable<Integer> {
 	private final int minvalue, maxvalue;
 	private final MDDManager ddmanager;
 	private final int[] path;
+	private final int[] max;
 	
 	private int node;
 	
@@ -40,6 +41,17 @@ public class PathSearcher implements Iterable<Integer> {
 	}
 
 	/**
+	 * Create a new path searcher accepting any value (negative leaves are not
+	 * allowed) and detecting intervals
+	 * 
+	 * @param ddmanager The MDD manager in which this search works.
+	 * @param detectIntervals
+	 */
+	public PathSearcher(MDDManager ddmanager, boolean detectIntervals) {
+		this(ddmanager, 0, Integer.MAX_VALUE, detectIntervals);
+	}
+
+	/**
 	 * Create a new path searcher, with a single value.
 	 * 
 	 * @param ddmanager
@@ -49,6 +61,18 @@ public class PathSearcher implements Iterable<Integer> {
 	 */
 	public PathSearcher(MDDManager ddmanager, int value) {
 		this(ddmanager, value, value);
+	}
+	
+	/**
+	 * Create a new path searcher, with a single value and detecting intervals
+	 * 
+	 * @param ddmanager
+	 *            The MDD manager in which this search works.
+	 * @param value
+	 *            The value of the reached leaf
+	 */
+	public PathSearcher(MDDManager ddmanager, int value, boolean detectIntervals) {
+		this(ddmanager, value, value, detectIntervals);
 	}
 
 	/**
@@ -62,11 +86,21 @@ public class PathSearcher implements Iterable<Integer> {
 	 *            maximal value of the reached leaves
 	 */
 	public PathSearcher(MDDManager ddmanager, int minvalue, int maxvalue) {
+		this(ddmanager, minvalue, maxvalue, false);
+	}
+	
+	public PathSearcher(MDDManager ddmanager, int minvalue, int maxvalue, boolean detectIntervals) {
 		this.minvalue = minvalue;
 		this.maxvalue = maxvalue;
 		this.ddmanager = ddmanager;
 		
 		path = new int[ddmanager.getAllVariables().length];
+		
+		if (detectIntervals) {
+			max = new int[path.length];
+		} else {
+			max = null;
+		}
 	}
 
 	/**
@@ -99,6 +133,18 @@ public class PathSearcher implements Iterable<Integer> {
 		return path;
 	}
 	
+	/**
+	 * Get the int[] used to store max values if this searcher detects intervals.
+	 * 
+	 * @return a reusable array in which intervals will be stored, or null if the searcher does not support it.
+	 */
+	public int[] getMax() {
+		if (max == null) {
+			throw new RuntimeException("This path searcher does not support intervals");
+		}
+		return max;
+	}
+	
 	@Override
 	public Iterator<Integer> iterator() {
 		if (ddmanager.isleaf(node)) {
@@ -106,13 +152,22 @@ public class PathSearcher implements Iterable<Integer> {
 				for (int i=0 ; i<path.length ; i++) {
 					path[i] = -1;
 				}
+				if (max != null) {
+					for (int i=0 ; i<max.length ; i++) {
+						max[i] = -1;
+					}
+				}
 				return new SingleLeafIterator(node);
 			}
 			
 			return EmptyIterator.EMPTYITERATOR;
 		}
 		
-		return new PathFoundIterator(ddmanager, node, path, minvalue, maxvalue);
+		if (max == null) {
+			return new PathFoundIterator(ddmanager, node, path, minvalue, maxvalue);
+		}
+		
+		return new PathFoundIterator(ddmanager, node, path, max, minvalue, maxvalue);
 	}
 
 
@@ -182,18 +237,24 @@ class SingleLeafIterator implements Iterator<Integer> {
 class PathFoundIterator implements Iterator<Integer> {
 	private final PathBacktrack backtrack;
 	private final int[] path;
+	private final int[] tmax;
 	private final int minvalue, maxvalue;
 	
 	private int leaf;
 
 	public PathFoundIterator(MDDManager ddmanager, int node, int[] path, int min, int max) {
+		this(ddmanager, node, path, null, min, max);
+	}
+	public PathFoundIterator(MDDManager ddmanager, int node, int[] path, int[] tmax, int min, int max) {
 		this.path = path;
 		this.minvalue = min;
 		this.maxvalue = max;
+		this.tmax = tmax;
+
 		this.backtrack = new PathBacktrack(ddmanager);
 		backtrack.reset(node);
 		
-		leaf = getNextLeaf();
+		leaf = getNextLeaf(tmax != null);
 	}
 
 	@Override
@@ -203,9 +264,20 @@ class PathFoundIterator implements Iterator<Integer> {
 
 	@Override
 	public Integer next() {
+		if (leaf < 0) {
+			return null;
+		}
+		
 		int ret = leaf;
-		backtrack.fillPath(path);
-		leaf = getNextLeaf();
+		
+		if (tmax == null) {
+			backtrack.fillPath(path);
+			leaf = getNextLeaf(false);
+		} else {
+			backtrack.fillPathAndMax(path, tmax);
+			leaf = getNextLeaf(true);
+		}
+		
 		return ret;
 	}
 
@@ -222,9 +294,13 @@ class PathFoundIterator implements Iterator<Integer> {
 	 * @return the value of the next leaf, or -1 after the last one.
 	 * @see #fillPath()
 	 */
-	public int getNextLeaf() {
+	public int getNextLeaf(boolean intervals) {
 		while (leaf >= 0) {
-			leaf = backtrack.findNextLeaf();
+			if (intervals) {
+				leaf = backtrack.findNextLeafMaxVersion();
+			} else {
+				leaf = backtrack.findNextLeaf();
+			}
 			if (leaf >= minvalue && leaf <= maxvalue) {
 				return leaf;
 			}
@@ -264,9 +340,41 @@ class PathBacktrack {
 		for (int idx = 0; idx <= pos; idx++) {
 			MDDVariable var = ddmanager.getNodeVariable(indices[idx]);
 			int i = ddmanager.getVariableIndex(var);
+			
 			path[i] = values[idx];
 		}
 	}
+
+	public void fillPathAndMax(int[] path, int[] tmax) {
+		for (int i = 0; i < path.length; i++) {
+			path[i] = -1;
+			tmax[i] = -1;
+		}
+		for (int idx = 0; idx <= pos; idx++) {
+			int mdd = indices[idx];
+			int value = values[idx];
+			int child = ddmanager.getChild(mdd, value);
+			MDDVariable var = ddmanager.getNodeVariable(mdd);
+			
+			// lookup the max value with the same child
+			int max = value;
+			for ( max++ ; max < var.nbval ; max++) {
+				int curChild = ddmanager.getChild(mdd, max);
+				if (curChild != child) {
+					max--;
+					break;
+				}
+			}
+			if (max >= var.nbval) {
+				max--;
+			}
+
+			int i = ddmanager.getVariableIndex(var);
+			path[i] = values[idx];
+			tmax[i] = max;
+		}
+	}
+
 
 	/**
 	 * Find the next leaf in this MDD and store the path in the provided array.
@@ -300,5 +408,49 @@ class PathBacktrack {
 			}
 		}
 		return findNextLeaf();
+	}
+	
+	public int findNextLeafMaxVersion() {
+		if (pos < 0) {
+			throw new RuntimeException("findNext called after exploration is finished");
+		}
+
+		int node = indices[pos];
+		if (ddmanager.isleaf(node)) {
+			throw new RuntimeException("findNext went too far");
+		}
+		
+		int curValue = values[pos];
+		MDDVariable var = ddmanager.getNodeVariable(node);
+		if (curValue >= 0) {
+			int child = ddmanager.getChild(node, curValue);
+
+
+			for ( curValue++ ; curValue<var.nbval ; curValue++) {
+				int curChild = ddmanager.getChild(node, curValue);
+				if (curChild != child) {
+					break;
+				}
+			}
+		} else {
+			curValue++;
+		}
+		
+		if (curValue < var.nbval) {
+			values[pos] = curValue;
+			int next = ddmanager.getChild(node, curValue);
+			if (ddmanager.isleaf(next)) {
+				return next;
+			}
+			pos++;
+			indices[pos] = next;
+			values[pos] = -1;
+		} else {
+			pos--;
+			if (pos < 0) {
+				return -1;
+			}
+		}
+		return findNextLeafMaxVersion();
 	}
 }

@@ -89,7 +89,6 @@ public class TestMDD extends TestCase {
 		}
 		
 		MDDManager pManager = manager.getManager(keys2);
-		MDDVariable[] pVariables = pManager.getAllVariables();
 
 		// build two simple logical functions:
 		//   var0 OR ( (NOT var2) AND var4 )
@@ -183,6 +182,23 @@ public class TestMDD extends TestCase {
 		assertEquals(VariableEffect.DUAL, ddmanager.getVariableEffect(variables[2], n3));
 		assertEquals(VariableEffect.NONE, ddmanager.getVariableEffect(variables[3], n3));
 		
+	}
+	
+	@Test
+	public void testIntervalPathSearcher() {
+		MDDVariableFactory varFactory = new MDDVariableFactory();
+		for (int i = 0; i < 5; i++) {
+			varFactory.add("var" + i, (byte)3);
+		}
+		MDDManager ddmanager = MDDManagerFactory.getManager( varFactory, 10);
+		MDDVariable[] variables = ddmanager.getAllVariables();
+		
+		int n1 = variables[4].getNode(new int[]{0, 0, 1});
+		int n2 = variables[4].getNode(new int[]{1, 0, 0});
+		int n3 = variables[2].getNode(new int[]{1, n1, n2});
+
+		PathSearcher ps = new PathSearcher(ddmanager, true);
+		checkPath(ps, n3, 	new int[][] { { -1, -1,  0, -1,  -1},  { -1, -1,  1, -1,  0}, { -1, -1,  1, -1,  2}, { -1, -1,  2, -1,  0}, { -1, -1,  2, -1,  1},});
 	}
 	
 	private MDDManager getSimpleManager(int size) {
