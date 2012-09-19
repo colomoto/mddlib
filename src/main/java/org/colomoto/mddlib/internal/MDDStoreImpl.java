@@ -866,7 +866,7 @@ public class MDDStoreImpl implements MDDStore {
 		// otherwise, just browse deeper
 		int curChild = getChild(node, 0);
 		VariableEffect effect = getVariableEffect(var, curChild);
-		for (int value=1 ; value < var.nbval ; value++) {
+		for (int value=1 ; value < curVar.nbval ; value++) {
 			int nextChild = getChild(node, value);
 			if (nextChild != curChild) {
 				curChild = nextChild;
