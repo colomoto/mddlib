@@ -355,18 +355,19 @@ class PathBacktrack {
 			int value = values[idx];
 			int child = ddmanager.getChild(mdd, value);
 			MDDVariable var = ddmanager.getNodeVariable(mdd);
-			
+
 			// lookup the max value with the same child
 			int max = value;
-			for ( max++ ; max < var.nbval ; max++) {
-				int curChild = ddmanager.getChild(mdd, max);
-				if (curChild != child) {
-					max--;
+			int absolutemax = var.nbval-1;
+			while ( max < absolutemax) {
+				int nextvalue = max+1;
+				if (ddmanager.getChild(mdd, nextvalue) != child) {
 					break;
 				}
+				max = nextvalue;
 			}
-			if (max >= var.nbval) {
-				max--;
+			if (max > value && max >= absolutemax) {
+				max = -1;
 			}
 
 			int i = ddmanager.getVariableIndex(var);
