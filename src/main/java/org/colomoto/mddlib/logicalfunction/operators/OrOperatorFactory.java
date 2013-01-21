@@ -69,10 +69,7 @@ class OrOperator extends AbstractBinaryOperator {
 	}
 	
 	@Override
-	protected MDDOperator getMDDOperation(boolean reversed) {
-		if (reversed) {
-			return MDDBaseOperators.AND;
-		}
+	protected MDDOperator getMDDOperation() {
 		return MDDBaseOperators.OR;
 	}
 }

@@ -29,12 +29,6 @@ public abstract class AbstractOperator implements FunctionNode {
     return false;
   }
 
-  @Override
-  public int getMDD(MDDManager ddmanager) {
-	  return getMDD(ddmanager, false);
-  }
-
-  
   public abstract String getSymbol();
   public abstract int getNbArgs();
   public abstract FunctionNode[] getArgs();

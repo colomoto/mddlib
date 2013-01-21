@@ -46,15 +46,7 @@ public abstract class AbstractOperand implements FunctionNode {
 
 	@Override
 	public int getMDD(MDDManager ddmanager) {
-		return getMDD(ddmanager, false);
-	}
-
-	@Override
-	public int getMDD(MDDManager ddmanager, boolean reversed) {
 		MDDVariable var = ddmanager.getVariableForKey(getMDDVariableKey());
-		if (reversed) {
-			return var.getSimpleNode(1, 0, getRangeStart(), getRangeEnd());
-		}
 		return var.getSimpleNode(0, 1, getRangeStart(), getRangeEnd());
 	}
 }

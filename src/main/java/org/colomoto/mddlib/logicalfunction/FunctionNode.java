@@ -32,13 +32,4 @@ public interface FunctionNode {
 	 */
 	int getMDD(MDDManager ddmanager);
 	
-	/**
-	 * Construct a MDD corresponding to this logical function.
-	 * 
-	 * @param ddmanager the MDDManager in which the MDD will be stored.
-	 * @param reversed
-	 * 
-	 * @return the index of the corresponding MDD root.
-	 */
-	int getMDD(MDDManager ddmanager, boolean reversed);
 }
