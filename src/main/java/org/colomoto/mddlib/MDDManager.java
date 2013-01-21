@@ -158,6 +158,12 @@ public interface MDDManager {
 	 * @return the number of non-leaf nodes stored in the manager.
 	 */
 	int getNodeCount();
+	
+	/**
+	 * Get the number of leaves
+	 * @return the number of possible leaves (i.e. max leaf index)
+	 */
+	int getLeafCount();
 
 	/**
 	 * Infer the effect of a variable in a given MDD.
@@ -205,4 +211,5 @@ public interface MDDManager {
 	 * @return the effects of each level switch for this variable
 	 */
 	VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node);
+	
 }

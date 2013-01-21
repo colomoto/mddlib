@@ -153,6 +153,11 @@ public class MDDManagerProxy implements MDDManager {
 	public int getNodeCount() {
 		return store.getNodeCount();
 	}
+	
+	@Override
+	public int getLeafCount() {
+		return store.getLeafCount();
+	}
 
 	@Override
 	public int getSign(int node, MDDVariable pivot) {

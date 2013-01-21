@@ -675,6 +675,11 @@ public class MDDStoreImpl implements MDDStore {
 	}
 
 	@Override
+	public int getLeafCount() {
+		return nbleaves;
+	}
+
+	@Override
 	public boolean isleaf(int id) {
 		return id < nbleaves;
 	}
@@ -1068,5 +1073,4 @@ public class MDDStoreImpl implements MDDStore {
 		}
 		System.out.println();
 	}
-
 }
