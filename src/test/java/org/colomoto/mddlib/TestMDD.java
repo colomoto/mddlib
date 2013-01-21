@@ -201,7 +201,7 @@ public class TestMDD extends TestCase {
 		checkPath(ps, n3, 	new int[][] { { -1, -1,  0, -1,  -1},  { -1, -1,  1, -1,  0}, { -1, -1,  1, -1,  2}, { -1, -1,  2, -1,  0}, { -1, -1,  2, -1,  1},});
 	}
 	
-	private MDDManager getSimpleManager(int size) {
+	public static MDDManager getSimpleManager(int size) {
 		List<String> keys = new ArrayList<String>();
 		for (int i = 0; i < size; i++) {
 			keys.add("var" + i);
