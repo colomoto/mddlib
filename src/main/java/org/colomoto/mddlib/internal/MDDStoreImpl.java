@@ -469,6 +469,9 @@ public class MDDStoreImpl implements MDDStore {
 	 */
 	private int leafFlip(int node, int[] newValues) {
 		if (isleaf(node)) {
+			if (node >= newValues.length) {
+				return node;
+			}
 			return newValues[node];
 		}
 		int level = blocs[node];
@@ -481,7 +484,7 @@ public class MDDStoreImpl implements MDDStore {
 		
 		int[] children = new int[nbval];
 		for (int i=0 ; i<children.length ; i++) {
-			children[i] = leafFlip(node+INC_VALUES+i, newValues);
+			children[i] = leafFlip(blocs[node+INC_VALUES+i], newValues);
 		}
 		return getNodeFree(level, children);
 	}

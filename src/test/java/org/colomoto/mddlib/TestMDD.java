@@ -201,6 +201,32 @@ public class TestMDD extends TestCase {
 		checkPath(ps, n3, 	new int[][] { { -1, -1,  0, -1,  -1},  { -1, -1,  1, -1,  0}, { -1, -1,  1, -1,  2}, { -1, -1,  2, -1,  0}, { -1, -1,  2, -1,  1},});
 	}
 	
+	@Test
+	public void testMultivaluedNot() {
+		MDDVariableFactory varFactory = new MDDVariableFactory();
+		for (int i = 0; i < 5; i++) {
+			varFactory.add("var" + i, (byte)3);
+		}
+		MDDManager ddmanager = MDDManagerFactory.getManager( varFactory, 10);
+		MDDVariable[] variables = ddmanager.getAllVariables();
+		
+		int n1 = variables[4].getNode(new int[]{0, 0, 1});
+		int n2 = variables[4].getNode(new int[]{1, 0, 0});
+		int n3 = variables[2].getNode(new int[]{1, n1, n2});
+
+		int n4 = ddmanager.not(n1);
+		n4 = ddmanager.not(n4);
+		assertEquals(n1, n4);
+
+		n4 = ddmanager.not(n2);
+		n4 = ddmanager.not(n4);
+		assertEquals(n2, n4);
+
+		n4 = ddmanager.not(n3);
+		n4 = ddmanager.not(n4);
+		assertEquals(n3, n4);
+	}
+	
 	public static MDDManager getSimpleManager(int size) {
 		List<String> keys = new ArrayList<String>();
 		for (int i = 0; i < size; i++) {
