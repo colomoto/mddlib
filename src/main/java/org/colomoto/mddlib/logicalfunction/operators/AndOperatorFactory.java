@@ -20,7 +20,7 @@ public class AndOperatorFactory implements OperatorFactory {
 	 */
 	public static final AndOperatorFactory FACTORY = new AndOperatorFactory();
 	
-	public static final int PRIORITY = 0;
+	public static final int PRIORITY = 1;
 	public static final String SYMBOL = "&";
 
 	private AndOperatorFactory() {

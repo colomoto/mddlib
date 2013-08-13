@@ -19,7 +19,7 @@ public class NotOperatorFactory implements OperatorFactory {
 	 */
 	public static final NotOperatorFactory FACTORY = new NotOperatorFactory();
 	
-	public static final int PRIORITY = 1;
+	public static final int PRIORITY = 2;
 	public static final String SYMBOL = "!";
 
 	private NotOperatorFactory() {
