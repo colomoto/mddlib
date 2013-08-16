@@ -81,6 +81,11 @@ public class MDDManagerProxy implements MDDManager {
 	}
 
 	@Override
+	public byte groupReach(int node, byte[] values) {
+		return store.groupReach(node, values, store2custom);
+	}
+
+	@Override
 	public MDDVariable getVariableForKey(Object key) {
 		MDDVariable var = store.getVariableForKey(key);
 		int idx = store2custom[var.order];
@@ -182,5 +187,18 @@ public class MDDManagerProxy implements MDDManager {
 	@Override
 	public VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node) {
 		return store.getMultivaluedVariableEffect(var, node);
+	}
+
+	@Override
+	public boolean isView(MDDManager ddm) {
+		if (store == ddm) {
+			return true;
+		}
+		
+		if (ddm instanceof MDDManagerProxy) {
+			return store == ((MDDManagerProxy)ddm).store;
+		}
+		
+		return false;
 	}
 }

@@ -163,7 +163,8 @@ public class MDDVariable {
 	@Override
 	public boolean equals(Object other) {
 		if (other instanceof MDDVariable) {
-			return key.equals(((MDDVariable)other).key);
+			MDDVariable ovar = (MDDVariable)other;
+			return key.equals(ovar.key) && this.nbval == ovar.nbval;
 		}
 		return key.equals(other);
 	}

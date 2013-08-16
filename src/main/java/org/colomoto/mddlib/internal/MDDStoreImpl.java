@@ -743,6 +743,41 @@ public class MDDStoreImpl implements MDDStore {
 		return (byte)node;
 	}
 
+	@Override
+	public byte groupReach(int node, byte[] values) {
+		if (isleaf(node)) {
+			return (byte)node;
+		}
+
+		int level = getLevel(node);
+		int v = values[level];
+		if (v < 0) {
+			int ret = groupReach(getChild(node, 0), values);
+			if (ret < 0) {
+				return -1;
+			}
+			int n = variables[level].nbval;
+			for (int i=1 ; i<n ; i++) {
+				int nret = groupReach(getChild(node, i), values);
+				if (nret != ret) {
+					return -1;
+				}
+			}
+			return (byte)ret;
+		}
+		
+		return groupReach(getChild(node, v), values);
+	}
+
+	@Override
+	public byte groupReach(int node, byte[] values, int[] orderMap) {
+		if (orderMap == null) {
+			return groupReach(node, values);
+		}
+		
+		throw new RuntimeException("Proxied group reach not implemented yet");
+	}
+
 	
 	@Override
 	public int getSign(int node, MDDVariable pivot) {
@@ -1075,5 +1110,18 @@ public class MDDStoreImpl implements MDDStore {
 			System.out.print(a[i]+" ");
 		}
 		System.out.println();
+	}
+
+	@Override
+	public boolean isView(MDDManager ddm) {
+		if (ddm == this) {
+			return true;
+		}
+		
+		if (ddm instanceof MDDManagerProxy) {
+			return ddm.isView(this);
+		}
+		
+		return false;
 	}
 }

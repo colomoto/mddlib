@@ -185,6 +185,16 @@ public interface MDDManager {
 	byte reach(int node, byte[] values);
 
 	/**
+	 * Get the value reached by a group of paths.
+	 * 
+	 * @param node
+	 * @param path
+	 * 
+	 * @return the leaf reached for this assignment
+	 */
+	byte groupReach(int node, byte[] path);
+
+	/**
 	 * Collect variables on which a MDD depends.
 	 * 
 	 * @param node
@@ -212,4 +222,5 @@ public interface MDDManager {
 	 */
 	VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node);
 	
+	boolean isView(MDDManager ddm);
 }

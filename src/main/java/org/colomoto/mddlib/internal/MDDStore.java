@@ -46,5 +46,16 @@ public interface MDDStore extends MDDManager {
 	 * @return the reached leaf
 	 */
 	byte reach(int node, byte[] values, int[] orderMap);
+	
+	/**
+	 * Find the leaf reached for a given group of variable assignment and custom order.
+	 * This is used by proxy MDDManager to implement <code>groupReach(int byte[])</code>
+	 * 
+	 * @param node
+	 * @param values
+	 * 
+	 * @return the reached leaf
+	 */
+	byte groupReach(int node, byte[] values, int[] orderMap);
 
 }
