@@ -31,8 +31,7 @@ public class MDDComparatorFactory {
 			return new CompatibleComparator(ddm1, ddm2);
 		}
 		
-		throw new RuntimeException("Unsupported MDD comparator");
-		//return new HeavyComparator(ddm1, ddm2);
+		return new HeavyComparator(ddm1, ddm2);
 	}
 
 	/**
@@ -172,7 +171,7 @@ class HeavyComparator implements MDDComparator {
 	private final MDDManager ddm1, ddm2;
 	private final PathSearcher searcher;
 	private final int[] pathMap;
-	private final int[] path2;
+	private final byte[] path2;
 
 	public HeavyComparator(MDDManager ddm1, MDDManager ddm2) {
 		this.ddm1 = ddm1;
@@ -195,9 +194,8 @@ class HeavyComparator implements MDDComparator {
 			pathMap[i] = i2;
 		}
 		
-		path2 = new int[ddm2.getAllVariables().length];
+		path2 = new byte[ddm2.getAllVariables().length];
 	}
-
 
 	/**
 	 * Compare MDDs from managers with different orders
@@ -206,18 +204,21 @@ class HeavyComparator implements MDDComparator {
 	public boolean similar(int n1, int n2) {
 		int[] path = searcher.setNode(n1);
 		for (int value: searcher) {
-			int[] p2 = fillPath(path);
+			byte[] p2 = fillPath(path);
 			if (p2 == null) {
 				return false;
 			}
 			
-			// TODO: check that all leaves reached for p2 have the correct value
+			byte v2 = ddm2.groupReach(n2, p2);
+			if (v2 != value) {
+				return false;
+			}
 		}
 
-		return false;
+		return true;
 	}
 	
-	private int[] fillPath(int[] p) {
+	private byte[] fillPath(int[] p) {
 		for (int i=0 ; i<p.length ; i++) {
 			int v = p[i];
 			int i2 = pathMap[i];
@@ -230,14 +231,9 @@ class HeavyComparator implements MDDComparator {
 				return null;
 			}
 			
-			path2[i2] = v;
+			path2[i2] = (byte)v;
 		}
 		
 		return path2;
-	}
-	
-	private boolean allReach(int value, int[] path, int node) {
-		//MDDVariable v
-		return true;
 	}
 }
