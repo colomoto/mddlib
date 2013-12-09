@@ -58,4 +58,13 @@ public interface MDDStore extends MDDManager {
 	 */
 	byte groupReach(int node, byte[] values, int[] orderMap);
 
+    /**
+     * Helper to build a node from a state in proxy views.
+     *
+     * @param state
+     * @param value
+     * @param orderMap
+     * @return
+     */
+    int nodeFromState(byte[] state, int value, int[] orderMap);
 }

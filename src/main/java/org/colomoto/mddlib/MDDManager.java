@@ -1,5 +1,6 @@
 package org.colomoto.mddlib;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -223,4 +224,22 @@ public interface MDDManager {
 	VariableEffect[] getMultivaluedVariableEffect(MDDVariable var, int node);
 	
 	boolean isView(MDDManager ddm);
+
+    /**
+     * Create a MDD representing a state.
+     *
+     * @param state
+     * @param value
+     * @return
+     */
+    int nodeFromState(byte[] state, int value);
+
+    /**
+     * Create a MDD representing a group of states.
+     *
+     * @param states
+     * @param value
+     * @return
+     */
+    int nodeFromStates(Collection<byte[]> states, int value);
 }

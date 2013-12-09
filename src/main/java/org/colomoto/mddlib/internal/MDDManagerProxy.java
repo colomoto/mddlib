@@ -1,11 +1,13 @@
 package org.colomoto.mddlib.internal;
 
+import java.util.Collection;
 import java.util.List;
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.NodeRelation;
 import org.colomoto.mddlib.VariableEffect;
+import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 /**
  * MDDManager adding a custom order on top of an existing MDDStore.
@@ -96,7 +98,26 @@ public class MDDManagerProxy implements MDDManager {
 		return var;
 	}
 
-	@Override
+
+    @Override
+    public int nodeFromState(byte[] state, int value) {
+        return store.nodeFromState(state, value, store2custom);
+    }
+
+    @Override
+    public int nodeFromStates(Collection<byte[]> states, int value) {
+        int node = 0;
+        for (byte[] state: states) {
+            int newNode = nodeFromState(state, value);
+            int nextNode = MDDBaseOperators.OR.combine(this, node, newNode);
+            free(newNode);
+            free(node);
+            node = nextNode;
+        }
+        return node;
+    }
+
+    @Override
 	public int getVariableIndex(MDDVariable var) {
 		return store2custom[var.order];
 	}

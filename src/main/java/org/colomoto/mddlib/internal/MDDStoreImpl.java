@@ -9,6 +9,7 @@ import org.colomoto.mddlib.MDDVariable;
 import org.colomoto.mddlib.MDDVariableFactory;
 import org.colomoto.mddlib.NodeRelation;
 import org.colomoto.mddlib.VariableEffect;
+import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 /**
  * MDD factory implementation: create, store, retrieve a collection of MDDs.
@@ -77,7 +78,7 @@ public class MDDStoreImpl implements MDDStore {
 	 * Create a new MDDStore.
 	 * 
 	 * @param capacity		number of nodes that can be stored in the initially reserved space.
-	 * @param variables		the list of variables that can be used.
+	 * @param keys		    the list of variables that can be used.
 	 * @param nbleaves		the number of values that can be reached.
 	 */
 	private MDDStoreImpl(int capacity, Collection<?> keys, int nbleaves) {
@@ -778,8 +779,7 @@ public class MDDStoreImpl implements MDDStore {
 		throw new RuntimeException("Proxied group reach not implemented yet");
 	}
 
-	
-	@Override
+    @Override
 	public int getSign(int node, MDDVariable pivot) {
 		return getSign(node, pivot, 0);
 	}
@@ -1124,4 +1124,69 @@ public class MDDStoreImpl implements MDDStore {
 		
 		return false;
 	}
+
+    @Override
+    public int nodeFromState(byte[] state, int value) {
+        if (value < 1) {
+            return value;
+        }
+
+        int node = value;
+        for (int l=variables.length-1 ; l>-1 ; l--) {
+            int v = state[l];
+            node = getSingleChildNode(l, v, node);
+        }
+        return node;
+    }
+
+    @Override
+    public int nodeFromStates(Collection<byte[]> states, int value) {
+        int node = 0;
+        for (byte[] state: states) {
+            int newNode = nodeFromState(state, value);
+            int nextNode = MDDBaseOperators.OR.combine(this, node, newNode);
+            free(newNode);
+            free(node);
+            node = nextNode;
+        }
+        return node;
+    }
+    @Override
+    public int nodeFromState(byte[] state, int value, int[] orderMap) {
+        if (orderMap == null) {
+            return nodeFromState(state, value);
+        }
+        if (value < 1) {
+            return value;
+        }
+
+        int node = value;
+        for (int l=variables.length-1 ; l>-1 ; l--) {
+            int v = state[orderMap[l]];
+            int nextNode = getSingleChildNode(l, value, node);
+            free(node);
+            node = nextNode;
+        }
+        return node;
+    }
+
+    private int getSingleChildNode(int level, int value, int child) {
+        if (value < 0) {
+            return child;
+        }
+
+        MDDVariable var = variables[level];
+        if (var.nbval == 2) {
+            if (value == 0) {
+                return var.getNode(child, 0);
+            } else {
+                return var.getNode(0, child);
+            }
+        } else {
+            int[] children = new int[var.nbval];
+            children[value] = child;
+            return var.getNode(children);
+        }
+    }
+
 }
