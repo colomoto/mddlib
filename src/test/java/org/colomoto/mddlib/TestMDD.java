@@ -1,5 +1,6 @@
 package org.colomoto.mddlib;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,7 +76,16 @@ public class TestMDD extends TestCase {
 				throw new RuntimeException("bad number of paths");
 			}
 		}
-	}
+
+        String dump = ddmanager.dumpMDD(newnode);
+        try {
+            int n = ddmanager.parseDump(dump);
+            assertEquals(n, newnode);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            fail("Error parsing the dump");
+        }
+    }
 
 	@Test
 	public void testOrderProxy() {

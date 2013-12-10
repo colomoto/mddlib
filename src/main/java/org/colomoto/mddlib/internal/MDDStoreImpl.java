@@ -1,7 +1,9 @@
 package org.colomoto.mddlib.internal;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Stack;
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.MDDManagerFactory;
@@ -1189,4 +1191,121 @@ public class MDDStoreImpl implements MDDStore {
         }
     }
 
+    @Override
+    public String dumpMDD(int mdd) {
+        StringBuffer sb = new StringBuffer();
+        write(mdd, sb);
+        return sb.toString();
+    }
+
+    private void write(int mdd, StringBuffer s) {
+        MDDVariable var = getNodeVariable(mdd);
+        if (var == null) {
+            s.append(mdd);
+            return;
+        }
+        s.append('(');
+        s.append(var.order);
+        s.append(',');
+        for (int i=0 ; i<var.nbval ; i++) {
+            if (i>0) {
+                s.append(',');
+            }
+            write(getChild(mdd,i), s);
+        }
+        s.append(')');
+    }
+
+
+    public int parseDump(String s) throws ParseException {
+        int length = s.length();
+        if (length == 1) {
+            int n = Integer.parseInt(s);
+            if ( isleaf(n) ) {
+                return n;
+            }
+            throw new ParseException("Value > max leaf", 0);
+        }
+
+        Stack<DumpedVariable> stack = new Stack<DumpedVariable>();
+        int node = -1;
+        for (int i=0 ; i < length ; i++) {
+            char c = s.charAt(i);
+            if (c == '(') {
+                i++;
+                int nPos = findValueEnd(s,i);
+                int level = Integer.parseInt(s.substring(i, nPos));
+                stack.add( new DumpedVariable(variables[level]));
+                i = nPos-1;
+            } else if (c == ')') {
+                // create the node and stack it in the previous variable
+                node = stack.pop().close(this, i);
+                if (stack.empty()) {
+                    if (i < length-1) {
+                        throw new ParseException("Malformed MDD dump", i);
+                    }
+                    return node;
+                }
+                stack.peek().stack(node, i);
+            } else if (c == ',') {
+            } else {
+                int nPos = findValueEnd(s, i);
+                node = Integer.parseInt(s.substring(i, nPos));
+                if (! isleaf(node) ) {
+                    throw new ParseException("Value > max leaf", 0);
+                }
+                // stack the leaf
+                i = nPos-1;
+                if (stack.empty()) {
+                    if (i < length-1) {
+                        throw new ParseException("Malformed MDD dump", i);
+                    }
+                    return node;
+                }
+                stack.peek().stack(node, i);
+            }
+        }
+
+        throw new ParseException("Malformed MDD dump", s.length());
+    }
+
+    private int findValueEnd(String s, int i) {
+        while (Character.isDigit( s.charAt(i++)));
+        return i-1;
+    }
+}
+
+/**
+ * Helper class to parse a dumped MDD: group MDD variable and their children and track problems
+ */
+class DumpedVariable {
+    private final MDDVariable var;
+    private final int[] children;
+
+    private int filled;
+
+    public DumpedVariable(MDDVariable var) {
+        this.var = var;
+        this.children = new int[var.nbval];
+        this.filled = 0;
+    }
+
+    public void stack(int child, int p) throws ParseException {
+        if (filled >= var.nbval) {
+            throw new ParseException("Too many children for variable "+var.order+", trying to stack "+child+". Line "+p, p);
+        }
+        children[filled++] = child;
+    }
+
+    public int close(MDDManager ddmanager, int p) throws ParseException {
+        if (filled != children.length) {
+            throw new ParseException("Bad number of children for variable "+var.order, p);
+        }
+
+        int node = var.getNode(children);
+        for (int c:children) {
+            ddmanager.free(c);
+        }
+        return node;
+    }
 }

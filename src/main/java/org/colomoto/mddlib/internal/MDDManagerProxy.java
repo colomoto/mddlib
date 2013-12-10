@@ -1,5 +1,6 @@
 package org.colomoto.mddlib.internal;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
 
@@ -222,4 +223,14 @@ public class MDDManagerProxy implements MDDManager {
 		
 		return false;
 	}
+
+    @Override
+    public String dumpMDD(int node) {
+        return store.dumpMDD(node);
+    }
+
+    @Override
+    public int parseDump(String s) throws ParseException {
+        return store.parseDump(s);
+    }
 }

@@ -1,5 +1,6 @@
 package org.colomoto.mddlib;
 
+import java.text.ParseException;
 import java.util.Collection;
 import java.util.List;
 
@@ -242,4 +243,21 @@ public interface MDDManager {
      * @return
      */
     int nodeFromStates(Collection<byte[]> states, int value);
+
+    /**
+     * Write a raw text representation of the MDD
+     *
+     * @param node
+     * @return a string representing the MDD structure
+     */
+    String dumpMDD(int node);
+
+    /**
+     * Create a MDD from a dumped structure
+     *
+     * @param s the string representing the MDD structure
+     * @return the corresponding MDD
+     * @throws ParseException
+     */
+    int parseDump(String s) throws ParseException;
 }
