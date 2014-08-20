@@ -181,7 +181,7 @@ public class MDDStoreImpl implements MDDStore {
 	}
 
 	@Override
-	public int getNode(int var, int lchild, int rchild) {
+	public synchronized int getNode(int var, int lchild, int rchild) {
 		if (lchild == rchild) {
 			return use(lchild);
 		}
@@ -301,7 +301,7 @@ public class MDDStoreImpl implements MDDStore {
 	/* ******************** USAGE COUNT ***************************** */
 	
 	@Override
-	public int use(int node) {
+	public synchronized int use(int node) {
 		if (!isleaf(node)) {
 			blocs[node+INC_COUNT]++;
 		}
@@ -309,7 +309,7 @@ public class MDDStoreImpl implements MDDStore {
 	}
 
 	@Override
-	public void free(int pos) {
+	public synchronized void free(int pos) {
 		if (!CANFREE) {
 			return;
 		}
@@ -494,7 +494,7 @@ public class MDDStoreImpl implements MDDStore {
 
 
 	@Override
-	public int not(int node) {
+	public synchronized int not(int node) {
 		return leafFlip(node, NOTFLIP);
 	}
 
@@ -1128,7 +1128,7 @@ public class MDDStoreImpl implements MDDStore {
 	}
 
     @Override
-    public int nodeFromState(byte[] state, int value) {
+    public synchronized int nodeFromState(byte[] state, int value) {
         if (value < 1) {
             return value;
         }
@@ -1142,7 +1142,7 @@ public class MDDStoreImpl implements MDDStore {
     }
 
     @Override
-    public int nodeFromStates(Collection<byte[]> states, int value) {
+    public synchronized int nodeFromStates(Collection<byte[]> states, int value) {
         int node = 0;
         for (byte[] state: states) {
             int newNode = nodeFromState(state, value);
@@ -1154,7 +1154,7 @@ public class MDDStoreImpl implements MDDStore {
         return node;
     }
     @Override
-    public int nodeFromState(byte[] state, int value, int[] orderMap) {
+    public synchronized int nodeFromState(byte[] state, int value, int[] orderMap) {
         if (orderMap == null) {
             return nodeFromState(state, value);
         }
@@ -1172,7 +1172,7 @@ public class MDDStoreImpl implements MDDStore {
         return node;
     }
 
-    private int getSingleChildNode(int level, int value, int child) {
+    private synchronized int getSingleChildNode(int level, int value, int child) {
         if (value < 0) {
             return child;
         }
