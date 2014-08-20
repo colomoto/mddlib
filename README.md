@@ -12,7 +12,7 @@ It is used as backend for the definition of Logical Models
 Licence
 -------
 
-This code is available under LGPL v2+.
+This code is available under LGPL v3+.
 
 
 
