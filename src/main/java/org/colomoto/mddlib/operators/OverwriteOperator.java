@@ -8,7 +8,7 @@ import org.colomoto.mddlib.NodeRelation;
  * Update a MDD by overwriting some of its leaves according to
  * another MDD.
  * 
- * @author Aurélien Naldi
+ * @author Aurelien Naldi
  */
 public class OverwriteOperator extends AbstractFlexibleOperator {
 	
