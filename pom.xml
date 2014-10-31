@@ -6,7 +6,7 @@
   <groupId>org.colomoto</groupId>
   <artifactId>MDDlib</artifactId>
   <name>MDD manipulation toolkit</name>
-  <version>0.2-SNAPSHOT</version>
+  <version>0.3-SNAPSHOT</version>
   <description>simple, flexible and non-optimized MDD toolkit</description>
   <inceptionYear>2009</inceptionYear>
   <packaging>jar</packaging>
