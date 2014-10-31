@@ -4,6 +4,8 @@ build
 dist
 core
 bak
+.idea
+*.iml
 *.jpx
 *.jpx.local
 .settings
