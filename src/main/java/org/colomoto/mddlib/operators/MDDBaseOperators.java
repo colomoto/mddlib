@@ -21,6 +21,15 @@ public class MDDBaseOperators {
 	 */
 	public static final MDDOperator OR = new MDDOrOperator();
 	
+	/**
+	 * the OVERLOAD operator.
+	 */
+	public static final MDDOperator OVER = new MDDOverloadOperator();
+	/**
+	 * the NOVERLOAD operator.
+	 */
+	public static final MDDOperator NOVER = new MDDOverloadNotOperator();
+	
 	private MDDBaseOperators() {
 		// no instance of this class
 	}
@@ -136,5 +145,70 @@ class MDDOrOperator extends AbstractOperator {
 			}
 		}
 		return leaves[0];
+	}
+
+}
+
+
+/**
+ * MDDOperator implementation for the "OVERLOAD" operation: true leaves of the
+ * other MDD will always overload the first one.
+ */
+class MDDOverloadOperator extends AbstractOperator {
+
+	protected MDDOverloadOperator() {
+		super(false);
+	}
+
+	@Override
+	public int combine(MDDManager ddmanager, int first, int other) {
+		if (first == other) {
+			return ddmanager.use(first);
+		}
+		NodeRelation status = ddmanager.getRelation(first, other);
+
+		switch (status) {
+		case NL:
+		case LL:
+			if (other > 0) {
+				// no need to "use" it: it is a leaf
+				return other;
+			}
+			return ddmanager.use(first);
+		default:
+			return recurse(ddmanager, status, first, other);
+		}
+	}
+}
+
+
+/**
+ * MDDOperator implementation for the "OVERLOAD" operation: true leaves of the
+ * other MDD will always overload and negate the first one.
+ */
+class MDDOverloadNotOperator extends AbstractOperator {
+
+	protected MDDOverloadNotOperator() {
+		super(false);
+	}
+
+	@Override
+	public int combine(MDDManager ddmanager, int first, int other) {
+		if (first == other) {
+			return ddmanager.use(first);
+		}
+		NodeRelation status = ddmanager.getRelation(first, other);
+
+		switch (status) {
+		case NL:
+		case LL:
+			if (other > 0) {
+				// no need to "use" it: it is a leaf
+				return 0;
+			}
+			return ddmanager.use(first);
+		default:
+			return recurse(ddmanager, status, first, other);
+		}
 	}
 }
