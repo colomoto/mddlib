@@ -498,6 +498,17 @@ public class MDDStoreImpl implements MDDStore {
 		return leafFlip(node, NOTFLIP);
 	}
 
+	@Override
+	public synchronized int mnot(int node, int v) {
+		int[] flipper = new int[v+1];
+		flipper[0] = v;
+		for (int i=1 ; i<v ; i++) {
+			flipper[i] = i;
+		}
+		flipper[v] = 0;
+		return leafFlip(node, flipper);
+	}
+
 
 	@Override
 	public NodeRelation getRelation(int first, int other) {

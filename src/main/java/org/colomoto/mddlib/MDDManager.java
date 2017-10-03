@@ -144,6 +144,15 @@ public interface MDDManager {
 	 * @return the ID of the flipped MDD root
 	 */
 	int not(int node);
+	
+	/**
+	 * Multi-valued not: flip leaves 0 and v.
+	 * 
+	 * @param node
+	 * @param v the positive value
+	 * @return
+	 */
+	int mnot(int node, int v);
 
 	/**
 	 * Determine the relation between two nodes.

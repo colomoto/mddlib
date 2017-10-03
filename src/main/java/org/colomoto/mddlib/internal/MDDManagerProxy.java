@@ -172,6 +172,11 @@ public class MDDManagerProxy implements MDDManager {
 	}
 
 	@Override
+	public int mnot(int node, int v) {
+		return store.mnot(node, v);
+	}
+
+	@Override
 	public NodeRelation getRelation(int first, int other) {
 		return store.getRelation(first, other);
 	}
