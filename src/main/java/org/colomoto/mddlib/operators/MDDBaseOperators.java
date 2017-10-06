@@ -26,12 +26,22 @@ public class MDDBaseOperators {
 	 */
 	public static final MDDOperator OVER = new MDDOverloadOperator();
 	/**
-	 * the NOVERLOAD operator.
+	 * the OVERLOAD at 0 operator.
 	 */
-	public static final MDDOperator NOVER = new MDDOverloadNotOperator();
+	public static final MDDOperator[] OVERV = new MDDOverloadCustomOperator[10];
+	
+	public static MDDOperator OVEROPERATOR(int v) {
+		return OVERV[v];
+	}
 	
 	private MDDBaseOperators() {
 		// no instance of this class
+	}
+	
+	static {
+		for (int v=0 ; v<10 ; v++) {
+			OVERV[v] = new MDDOverloadCustomOperator(v);
+		}
 	}
 }
 
@@ -186,10 +196,13 @@ class MDDOverloadOperator extends AbstractOperator {
  * MDDOperator implementation for the "OVERLOAD" operation: true leaves of the
  * other MDD will always overload and negate the first one.
  */
-class MDDOverloadNotOperator extends AbstractOperator {
+class MDDOverloadCustomOperator extends AbstractOperator {
 
-	protected MDDOverloadNotOperator() {
+	private final int overValue;
+	
+	protected MDDOverloadCustomOperator(int v) {
 		super(false);
+		this.overValue = v;
 	}
 
 	@Override
@@ -204,7 +217,7 @@ class MDDOverloadNotOperator extends AbstractOperator {
 		case LL:
 			if (other > 0) {
 				// no need to "use" it: it is a leaf
-				return 0;
+				return overValue;
 			}
 			return ddmanager.use(first);
 		default:
