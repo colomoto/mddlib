@@ -1,6 +1,7 @@
 package org.colomoto.mddlib;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * Iterate over the paths in MDDs, optionally filtering on the leaf values.
@@ -201,7 +202,7 @@ class EmptyIterator implements Iterator<Integer> {
 
 	@Override
 	public Integer next() {
-		return null;
+		throw new NoSuchElementException();
 	}
 
 	@Override
@@ -223,6 +224,9 @@ class SingleLeafIterator implements Iterator<Integer> {
 
 	@Override
 	public Integer next() {
+		if (leaf < 0) {
+			throw new NoSuchElementException();
+		}
 		int ret = leaf;
 		leaf = -1;
 		return ret;
@@ -265,7 +269,7 @@ class PathFoundIterator implements Iterator<Integer> {
 	@Override
 	public Integer next() {
 		if (leaf < 0) {
-			return null;
+			throw new NoSuchElementException();
 		}
 		
 		int ret = leaf;
