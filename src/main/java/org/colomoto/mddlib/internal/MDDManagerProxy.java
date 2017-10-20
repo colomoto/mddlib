@@ -21,8 +21,8 @@ import org.colomoto.mddlib.operators.MDDBaseOperators;
 public class MDDManagerProxy implements MDDManager {
 	
 	private final MDDStore store;
-	private final int[] store2custom, custom2store;
-	private final MDDVariable[] variables;
+	private int[] store2custom, custom2store;
+	private MDDVariable[] variables;
 	
 	
 	public static MDDManager getProxy(MDDStore store, List<?> customOrder) {
@@ -128,6 +128,33 @@ public class MDDManagerProxy implements MDDManager {
 		return variables;
 	}
 
+
+	@Override
+	public MDDVariable ensureVariable(Object key, byte nbval) {
+		MDDVariable inStore = store.ensureVariable(key, nbval);
+		if (inStore.order >= variables.length) {
+			MDDVariable[] extended = new MDDVariable[variables.length+1];
+			System.arraycopy(variables, 0, extended, 0, variables.length);
+			extended[variables.length] = inStore;
+			this.variables = extended;
+			
+			custom2store = extendmapping(custom2store, variables.length);
+			store2custom = extendmapping(store2custom, variables.length);
+		}
+		return inStore;
+	}
+	
+	private int[] extendmapping(int[] mapping, int l) {
+		if (l <= mapping.length) {
+			return mapping;
+		}
+		int[] extended = new int[l];
+		System.arraycopy(mapping, 0, extended, 0, mapping.length);
+		for (int i=mapping.length ; i<extended.length ; i++) {
+			extended[i] = i;
+		}
+		return extended;
+	}
 	
 	/* **************** Pure proxy ************************* */
 	

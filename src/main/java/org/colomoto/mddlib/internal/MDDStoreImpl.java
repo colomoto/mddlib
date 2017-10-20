@@ -175,6 +175,22 @@ public class MDDStoreImpl implements MDDStore {
 	}
 
 	@Override
+	public MDDVariable ensureVariable(Object key, byte nbval) {
+		MDDVariable var = getVariableForKey(key);
+		if (var == null) {
+			// create the variable
+			var = new MDDVariable(this, variables.length, key, nbval);
+			MDDVariable[] extended = new MDDVariable[variables.length+1];
+			System.arraycopy(variables, 0, extended, 0, variables.length);
+			extended[variables.length] = var;
+			variables = extended;
+		} else if (var.nbval < nbval) {
+			throw new RuntimeException("changing the number of values of a component is not supported");
+		}
+		return var;
+	}
+
+	@Override
 	public MDDVariable[] getAllVariables() {
 		// should we return a clone?
 		return variables;

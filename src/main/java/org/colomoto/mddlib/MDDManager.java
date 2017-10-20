@@ -83,6 +83,15 @@ public interface MDDManager {
 	MDDVariable[] getAllVariables();
 	
 	/**
+	 * get a variable, create it if needed.
+	 * 
+	 * @param key
+	 * @param nbval
+	 * @return
+	 */
+	MDDVariable ensureVariable(Object key, byte nbval);
+	
+	/**
 	 * Free a node. If it is not used at all anymore, it will be removed from the data structure.
 	 * <p>
 	 * This should be used for each node id that was obtained through one of the <code>get_?node()</code> method,
