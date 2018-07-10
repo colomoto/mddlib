@@ -32,10 +32,19 @@ public interface OperandFactory {
 
 	/**
 	 * Create an operand object for a given name.
-	 * 
+	 *
 	 * @param name
-	 * 
+	 *
 	 * @return an operand (BooleanNode) corresponding to the provided string 
 	 */
 	FunctionNode createOperand(String name);
+
+	/**
+	 * Create an operand object for a given name and threshold.
+	 *
+	 * @param name
+	 *
+	 * @return an operand corresponding to the provided name
+	 */
+	FunctionNode createOperand(String name, int threshold);
 }

@@ -128,8 +128,11 @@ public class MDDVariable {
 	 * @return a MDD ID.
 	 */
 	public int getSimpleNode(int vfalse, int vtrue, int start, int end) {
-		if (start>end || start<0 || end>=nbval) {
+		if (start>end || start<0) {
 			return -1;
+		}
+		if (end >= nbval) {
+			end = nbval-1;
 		}
 		if (nbval == 2) {
 			if (start != end) {

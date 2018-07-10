@@ -40,7 +40,7 @@ public class OverwriteOperator extends AbstractFlexibleOperator {
 			case LL:
 			case NL:
 				if (other > 0) {
-					return ddmanager.use(other);
+					return ddmanager.use(value);
 				}
 				return ddmanager.use(first);
 		}

@@ -46,6 +46,27 @@ public class SimpleOperandFactory<T> implements OperandFactory {
 	}
 
 	@Override
+	public AbstractOperand createOperand(String name, int threshold) {
+		if (threshold < 1 || threshold > 100) {
+			return null;
+		}
+
+		SimpleOperand<T> operand = operandMap.get(name);
+		if (threshold == 1 || operand == null) {
+			return operand;
+		}
+
+		String key = name+"@"+threshold;
+		SimpleOperand<T> thop = operandMap.get(key);
+		if (thop == null) {
+			thop = new SimpleOperand<T>(operand.object, operand.variable, threshold);
+			operandMap.put(key, thop);
+		}
+
+		return thop;
+	}
+
+	@Override
 	public MDDManager getMDDManager() {
 		if (ddmanager == null) {
 			
@@ -59,17 +80,36 @@ class SimpleOperand<T> extends AbstractOperand {
 
 	T object;
 	int variable;
-	
+	int threshold = 1;
+
 	public SimpleOperand(T object, int variable) {
+		this(object, variable, 1);
+	}
+	public SimpleOperand(T object, int variable, int threshold) {
 		this.object = object;
 		this.variable = variable;
+		this.threshold = threshold;
 	}
 	@Override
 	public String toString(boolean par) {
-		return object.toString();
+		String s = object.toString();
+		if (threshold != 1) {
+			s += "@" + threshold;
+		}
+		return s;
 	}
 	@Override
 	public T getMDDVariableKey() {
 		return object;
+	}
+
+	@Override
+	public int getRangeStart() {
+		return threshold;
+	}
+
+	@Override
+	public int getRangeEnd() {
+		return Byte.MAX_VALUE;
 	}
 }
