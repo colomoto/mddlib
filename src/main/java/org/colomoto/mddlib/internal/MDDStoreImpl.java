@@ -735,6 +735,9 @@ public class MDDStoreImpl implements MDDStore {
 		if (isleaf(id)) {
 			return -1;
 		}
+		if (value < 0) {
+			return -5;
+		}
 		return blocs[id+INC_VALUES+value];
 	}
 
