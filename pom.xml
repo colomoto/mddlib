@@ -6,42 +6,26 @@
   <groupId>org.colomoto</groupId>
   <artifactId>MDDlib</artifactId>
   <name>MDD manipulation toolkit</name>
-  <version>0.3-SNAPSHOT</version>
+  <version>0.4-SNAPSHOT</version>
   <description>simple, flexible and non-optimized MDD toolkit</description>
   <inceptionYear>2009</inceptionYear>
   <packaging>jar</packaging>
   <url>https://github.com/colomoto/mddlib</url>
 
   <properties>
+    <project.java.version>1.8</project.java.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
   </properties>
 
   <dependencies>
     <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>4.10</version>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter-api</artifactId>
+      <version>5.2.0</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
-  <build>
-    <plugins>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.5.1</version>
-        <configuration>
-           <source>1.6</source>
-           <target>1.6</target>
-        </configuration>
-      </plugin>
-
-    </plugins>
-  </build>
-
 
   <!--
    deploy to a local repository using:

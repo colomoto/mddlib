@@ -5,20 +5,18 @@ import java.util.List;
 
 import org.colomoto.mddlib.MDDManager;
 import org.colomoto.mddlib.PathSearcher;
-import org.colomoto.mddlib.logicalfunction.FunctionNode;
-import org.colomoto.mddlib.logicalfunction.FunctionParser;
-import org.colomoto.mddlib.logicalfunction.OperandFactory;
-import org.colomoto.mddlib.logicalfunction.SimpleOperandFactory;
+import org.junit.jupiter.api.Test;
 
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Simple test suite for the logical function parser.
  * 
  * @author Aurelien Naldi
  */
-public class TestLogicalFunctionParser extends TestCase {
+public class TestLogicalFunctionParser {
 
+	@Test
 	public void testLogicalFunction() {
 		List<String> operands = new ArrayList<String>();
 		for (int i=0 ; i<8 ; i++) {

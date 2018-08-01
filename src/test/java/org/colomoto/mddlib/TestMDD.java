@@ -1,23 +1,20 @@
 package org.colomoto.mddlib;
 
+import org.junit.jupiter.api.Test;
+
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
-import org.colomoto.mddlib.PathSearcher;
-import org.colomoto.mddlib.internal.MDDStoreImpl;
-import org.junit.Test;
-
-import junit.framework.TestCase;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 /**
  * Rough test case for MDD creation, duplicate detection and usage counter.
  * 
  * @author Aurelien Naldi
  */
-public class TestMDD extends TestCase {
+public class TestMDD {
 
 	@Test
 	public void testConstruction() {

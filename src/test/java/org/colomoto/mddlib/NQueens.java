@@ -1,12 +1,9 @@
 package org.colomoto.mddlib;
 
+import org.colomoto.mddlib.operators.MDDBaseOperators;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.colomoto.mddlib.MDDManager;
-import org.colomoto.mddlib.MDDVariable;
-import org.colomoto.mddlib.PathSearcher;
-import org.colomoto.mddlib.operators.MDDBaseOperators;
 
 
 /**

@@ -1,9 +1,10 @@
 package org.colomoto.mddlib;
 
-import static org.junit.Assert.*;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+
+import org.junit.jupiter.api.Test;
 
 public class TestComparators {
 
@@ -19,11 +20,12 @@ public class TestComparators {
 		int n2 = getMDDExample1(ddm2);
 		
 		MDDComparator comparator = MDDComparatorFactory.getComparator(ddm1, ddm2);
+
+
+		assertTrue(comparator.similar(n1, n2));
+		assertTrue(comparator.similar(m1, m2));
 		
-		Assert.assertTrue(comparator.similar(n1, n2));
-		Assert.assertTrue(comparator.similar(m1, m2));
-		
-		Assert.assertFalse(comparator.similar(n1, m2));
+		assertFalse(comparator.similar(n1, m2));
 	}
 
 	
