@@ -50,6 +50,23 @@ public class MDDVariable {
 		this.key = key;
 		this.nbval = nbval;
 	}
+
+	public int getNodeForValue(int v, int value) {
+		if (v < 0 || v >= nbval) {
+			return 1;
+		}
+
+		if (nbval == 2) {
+			if (v == 0) {
+				return this.getNode(value,0);
+			}
+			return this.getNode(0, value);
+		}
+		int[] children = new int[nbval];
+		children[v] = value;
+
+		return getNode(children);
+	}
 	
 	/**
 	 * get a boolean node. It will be created if needed
