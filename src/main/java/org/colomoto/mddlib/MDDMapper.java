@@ -12,12 +12,14 @@ public class MDDMapper {
     private final MDDManager sourceDDM, targetDDM;
     private final PathSearcher searcher;
     private final IndexMapper indexMapper;
+    private final MDDVariable[] variables;
 
     public MDDMapper(MDDManager sourceDDM, MDDManager targetDDM, IndexMapper indexMapper) {
         this.sourceDDM = sourceDDM;
         this.targetDDM = targetDDM;
         this.searcher = new PathSearcher(sourceDDM, 1, Integer.MAX_VALUE);
         this.indexMapper = indexMapper;
+        this.variables = targetDDM.getAllVariables();
     }
 
     public int mapMDD(int node) {
@@ -30,7 +32,7 @@ public class MDDMapper {
             for (int i=0 ; i<path.length ; i++) {
                 byte v = (byte)path[i];
                 if (v >= 0) {
-                    int curVar = targetDDM.getNodeVariable(indexMapper.get(i)).getNodeForValue(v, value);
+                    int curVar = variables[indexMapper.get(i)].getNodeForValue(v, value);
                     int nextBranch = MDDBaseOperators.AND.combine(targetDDM, curBranch, curVar);
                     targetDDM.free(curBranch);
                     targetDDM.free(curVar);
