@@ -49,7 +49,7 @@
     <repository>
       <id>github</id>
       <name>GitHub Packages</name>
-      <url>https://maven.pkg.github.com/colomoto/mddlib</url>
+      <url>${local.repository.url}</url>
     </repository>
   </distributionManagement>
 
